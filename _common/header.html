@@ -1,19 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <header class="flex items-center justify-between py-4 px-6 border-b">
-      <div class="text-2xl font-bold"><span class="material-symbols-outlined">palette</span></div>
-      <nav class="flex items-center space-x-6">
-        <a href="#" class="hover:opacity-75 transition-opacity">Main</a>
-        <a href="#" class="hover:opacity-75 transition-opacity">Community</a>
-        <button class="px-4 py-2 rounded hover:bg-gray-100 transition-colors">Sign in</button>
-        <button class="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">Register</button>
-      </nav>
-    </header>
-  </body>
-</html>
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <span class="material-symbols-outlined">palette</span>
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="header-nav-item">
+          <a class="nav-link" href="#">Main</a>
+        </li>
+        <li class="header-nav-item">
+          <a class="nav-link" href="#">Community</a>
+        </li>
+        <li class="header-nav-item">
+          <button class="btn btn-outline-secondary" type="button">Sign in</button>
+        </li>
+        <li class="header-nav-item-end">
+          <button class="btn btn-dark" type="button">Register</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
