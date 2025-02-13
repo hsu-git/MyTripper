@@ -1,44 +1,85 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>로그인</title>
+
+    <!-- Header, Footer 적용 -->
+    <link rel="stylesheet" href="/MyTripper/_common/header_footer_style.css" />
+    <script src="/MyTripper/_common/header_footer_script.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        .container { width: 300px; margin: 50px auto; }
-        input, button { width: 100%; padding: 10px; margin: 5px 0; }
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+      .container {
+        width: 300px;
+        margin: 50px auto;
+      }
+      input,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
+      <!-- Header -->
+      <nav id="header"></nav>
+      <!-- Header -->
+
+      <div class="container">
         <h2>로그인</h2>
-        <input type="email" id="email" placeholder="이메일">
-        <input type="password" id="password" placeholder="비밀번호">
+        <input type="email" id="email" placeholder="이메일" />
+        <input type="password" id="password" placeholder="비밀번호" />
         <button onclick="login()">로그인</button>
         <p>회원이 아니신가요? <a href="signup.html">회원가입</a></p>
+      </div>
+
+      <!-- Footer -->
+      <footer id="footer"></footer>
+      <!-- Footer -->
     </div>
 
     <script>
-        async function login() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+      // Bootstrap JS (Optional, for certain components like dropdowns)
+      src =
+        "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js";
+      integrity =
+        "sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN";
+      crossorigin = "anonymous";
 
-            const res = await fetch("http://localhost:3000/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            });
+      //----------------------------------------------------------------------------
+      async function login() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
 
-            const data = await res.json();
-            if (res.ok) {
-                localStorage.setItem("token", data.token);
-                alert("로그인 성공!");
-                window.location.href = "dashboard.html"; // 로그인 후 이동
-            } else {
-                alert("로그인 실패: " + data.message);
-            }
+        const res = await fetch("http://localhost:3000/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem("token", data.token);
+          alert("로그인 성공!");
+          window.location.href = "dashboard.html"; // 로그인 후 이동
+        } else {
+          alert("로그인 실패: " + data.message);
         }
+      }
     </script>
-</body>
+  </body>
 </html>
