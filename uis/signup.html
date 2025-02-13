@@ -3,28 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        .container { width: 300px; margin: 50px auto; }
-        input, button { width: 100%; padding: 10px; margin: 5px 0; }
-    </style>
+    <title>회원가입</title>
 </head>
 <body>
     <div class="container">
-        <h2>로그인</h2>
+        <h2>회원가입</h2>
         <input type="email" id="email" placeholder="이메일">
         <input type="password" id="password" placeholder="비밀번호">
-        <button onclick="login()">로그인</button>
-        <p>회원이 아니신가요? <a href="signup.html">회원가입</a></p>
+        <button onclick="signup()">회원가입</button>
+        <p>이미 회원이신가요? <a href="index.html">로그인</a></p>
     </div>
 
     <script>
-        async function login() {
+        async function signup() {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            const res = await fetch("http://localhost:3000/login", {
+            const res = await fetch("http://localhost:3000/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
@@ -32,11 +27,10 @@
 
             const data = await res.json();
             if (res.ok) {
-                localStorage.setItem("token", data.token);
-                alert("로그인 성공!");
-                window.location.href = "dashboard.html"; // 로그인 후 이동
+                alert("회원가입 성공! 로그인 해주세요.");
+                window.location.href = "index.html";
             } else {
-                alert("로그인 실패: " + data.message);
+                alert("회원가입 실패: " + data.message);
             }
         }
     </script>
