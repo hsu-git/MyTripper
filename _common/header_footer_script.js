@@ -5,5 +5,5 @@ function loadComponent(id, file) {
 }
 
 // 헤더와 푸터 로드
-loadComponent('header', 'header.html');
-loadComponent('footer', 'footer.html');
+loadComponent('header', '/MyTripper/_common/header.html');
+loadComponent('footer', '/MyTripper/_common/footer.html');
