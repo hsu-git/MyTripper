@@ -1,8 +1,3 @@
-/* ... (기존 스타일) ... */
-/*
-    스타일 규칙을 작성합니다.
-    이미지 파일 (logo.png)은 적절한 경로에 저장해야 합니다.
-*/
 body {
   font-family: sans-serif;
   margin: 0;
@@ -38,25 +33,13 @@ body {
 }
 
 .mbti-option {
-  /* 기존 스타일 */
   padding: 10px 20px;
   border: 1px solid #ccc;
   background-color: #fff;
   cursor: pointer;
-  /* 추가 */
-  transition: all 0.2s ease-in-out; /* 부드러운 애니메이션 효과 */
+  transition: all 0.2s ease-in-out;
 }
 
-.mbti-option.active {
-  /* 선택된 스타일 */
-  background-color: #007bff; /* 파란색 배경 */
-  color: #fff; /* 흰색 글자색 */
-  border-color: #007bff; /* 파란색 테두리 */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
-  transform: scale(1.05); /* 살짝 확대 */
-}
-
-/* .mbti-option.active 스타일 변경 */
 .mbti-option.active {
   background-color: #007bff;
   color: #fff;
@@ -65,50 +48,120 @@ body {
   transform: scale(1.05);
 }
 
-/* 비활성화 상태 스타일 (선택 사항) */
+.mbti-option.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
 .mbti-option {
-  opacity: 0.7; /* 살짝 흐릿하게 표시 */
-  cursor: default; /* 마우스 커서 변경 */
+  opacity: 0.7;
+  cursor: default;
 }
 
 .mbti-option.active,
 .mbti-option:hover {
-  opacity: 1; /* 활성화 시 원래대로 표시 */
-  cursor: pointer; /* 마우스 커서 변경 */
+  opacity: 1;
+  cursor: pointer;
 }
 
-/* 결과보기 버튼 비활성화 스타일 */
 #resultButton:disabled {
-  background-color: #ccc; /* 회색 배경 */
+  background-color: #ccc;
   color: #fff;
   border-color: #ccc;
   cursor: default;
 }
-/* .mbti-option.active 스타일 변경 */
-.mbti-option.active {
-  background-color: #007bff;
+
+.popup {
+  position: relative;
+  display: inline-block;
+}
+
+.popup .popuptext {
+  visibility: hidden; /* 초기 상태 숨김 */
+  width: 160px;
+  background-color: #555;
   color: #fff;
-  border-color: #007bff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transform: scale(1.05);
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1000; /* z-index 값 변경 */
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+  opacity: 0;
+  transition: opacity 0.8s;
 }
 
-/* 비활성화 상태 스타일 (선택 사항) */
-.mbti-option {
-  opacity: 0.7; /* 살짝 흐릿하게 표시 */
-  cursor: default; /* 마우스 커서 변경 */
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
 }
 
-.mbti-option.active,
-.mbti-option:hover {
-  opacity: 1; /* 활성화 시 원래대로 표시 */
-  cursor: pointer; /* 마우스 커서 변경 */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
 }
 
-/* 결과보기 버튼 비활성화 스타일 */
-#resultButton:disabled {
-  background-color: #ccc; /* 회색 배경 */
-  color: #fff;
-  border-color: #ccc;
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.category-title {
+  display: flex;
+  align-items: center;
+}
+
+.category-title p {
+  margin-right: 10px;
+}
+
+.mbti-category {
+  margin-bottom: 20px;
+}
+
+.popup {
+  position: relative; /* 상대 위치 사용 */
+  display: inline-block;
+}
+
+.popup .popuptext {
+  /* ... other styles ... */
+  white-space: nowrap; /* 텍스트를 한 줄에 표시 */
+  top: auto; /* 팝업 텍스트를 팝업 박스 위에 표시 */
+  bottom: 100%; /* 팝업 텍스트를 팝업 박스 바로 위에 표시 */
+  left: 50%; /* 팝업 텍스트를 팝업 박스 가운데 정렬 */
+  bottom: calc(100% + 5px); /* 팝업 텍스트를 팝업 박스 위 5px 위에 표시 */
+}
+.popup-box {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  margin-left: 5px;
   cursor: default;
 }
