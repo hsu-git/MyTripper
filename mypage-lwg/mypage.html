@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Webcrumbs Plugin</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="webcrumbs">
+      <div class="w-[1200px] mx-auto font-sans">
+        <header class="flex items-center justify-between py-4 px-6 border-b">
+          <div class="text-2xl font-bold"><span class="material-symbols-outlined">palette</span></div>
+          <nav class="flex items-center space-x-6">
+            <a href="#" class="hover:opacity-75 transition-opacity">Main</a>
+            <a href="#" class="hover:opacity-75 transition-opacity">Community</a>
+            <button class="px-4 py-2 rounded hover:bg-gray-100 transition-colors">Sign in</button>
+            <button class="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">Register</button>
+          </nav>
+        </header>
+        <main class="p-6">
+          <h1 class="text-2xl font-bold mb-8">마이페이지</h1>
+          <div class="flex gap-8">
+            <aside class="w-[250px]">
+              <div class="bg-white rounded-lg shadow-sm p-4">
+                <h2 class="font-bold mb-4">메뉴</h2>
+                <div class="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-1 rounded">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined">star</span> <span>내 정보 변경</span>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-1 rounded">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined">star</span> <span>내 글</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
+            <section class="flex-1">
+              <div class="bg-white rounded-lg shadow-sm p-6">
+                <form class="space-y-4">
+                  <div>
+                    <label class="block mb-2">Name</label>
+                    <input
+                      type="text"
+                      placeholder="Value"
+                      class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-gray-200"
+                    />
+                  </div>
+                  <div>
+                    <label class="block mb-2">Surname</label>
+                    <input
+                      type="text"
+                      placeholder="Value"
+                      class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-gray-200"
+                    />
+                  </div>
+                  <div>
+                    <label class="block mb-2">Email</label>
+                    <input
+                      type="email"
+                      placeholder="Value"
+                      class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-gray-200"
+                    />
+                  </div>
+                  <div>
+                    <label class="block mb-2">Message</label>
+                    <textarea
+                      placeholder="Value"
+                      rows="4"
+                      class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-gray-200"
+                    ></textarea>
+                  </div>
+                  <button class="w-full py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors">
+                    Submit
+                  </button>
+                </form>
+              </div>
+            </section>
+          </div>
+        </main>
+        <footer class="border-t mt-20 py-12 px-6">
+          <div class="flex justify-between">
+            <div>
+              <div class="text-2xl font-bold mb-6"><span class="material-symbols-outlined">palette</span></div>
+              <div class="flex space-x-4">
+                <a href="#" class="hover:opacity-75 transition-opacity"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="hover:opacity-75 transition-opacity"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="hover:opacity-75 transition-opacity"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" class="hover:opacity-75 transition-opacity"><i class="fa-brands fa-linkedin"></i></a>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-20">
+              <div>
+                <h3 class="font-bold mb-4">Use cases</h3>
+                <ul class="space-y-2">
+                  <li><a href="#" class="hover:underline">UI design</a></li>
+                  <li><a href="#" class="hover:underline">UX design</a></li>
+                  <li><a href="#" class="hover:underline">Wireframing</a></li>
+                  <li><a href="#" class="hover:underline">Diagramming</a></li>
+                  <li><a href="#" class="hover:underline">Brainstorming</a></li>
+                  <li><a href="#" class="hover:underline">Online whiteboard</a></li>
+                  <li><a href="#" class="hover:underline">Team collaboration</a></li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="font-bold mb-4">Explore</h3>
+                <ul class="space-y-2">
+                  <li><a href="#" class="hover:underline">Design</a></li>
+                  <li><a href="#" class="hover:underline">Prototyping</a></li>
+                  <li><a href="#" class="hover:underline">Development features</a></li>
+                  <li><a href="#" class="hover:underline">Design systems</a></li>
+                  <li><a href="#" class="hover:underline">Collaboration features</a></li>
+                  <li><a href="#" class="hover:underline">Design process</a></li>
+                  <li><a href="#" class="hover:underline">FigJam</a></li>
+                </ul>
+              </div>
+              <div>
+                <h3 class="font-bold mb-4">Resources</h3>
+                <ul class="space-y-2">
+                  <li><a href="#" class="hover:underline">Blog</a></li>
+                  <li><a href="#" class="hover:underline">Best practices</a></li>
+                  <li><a href="#" class="hover:underline">Colors</a></li>
+                  <li><a href="#" class="hover:underline">Color wheel</a></li>
+                  <li><a href="#" class="hover:underline">Support</a></li>
+                  <li><a href="#" class="hover:underline">Developers</a></li>
+                  <li><a href="#" class="hover:underline">Resource library</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
