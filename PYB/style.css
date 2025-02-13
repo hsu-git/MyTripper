@@ -1,0 +1,49 @@
+/*
+    스타일 규칙을 작성합니다.
+    이미지 파일 (logo.png)은 적절한 경로에 저장해야 합니다.
+*/
+body {
+  font-family: sans-serif;
+  margin: 0;
+}
+
+.hero {
+  text-align: center;
+  padding: 100px 0;
+}
+
+.mbti-selector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.mbti-category {
+  margin: 10px;
+}
+
+.btn-group {
+  display: inline-block;
+}
+
+.mbti-option {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.mbti-option.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.result-button {
+  padding: 15px 30px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+}
