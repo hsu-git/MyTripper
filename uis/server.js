@@ -1,62 +1,90 @@
+// 필요한 모듈 가져오기
 const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const cors = require("cors");
 const { createClient } = require("@supabase/supabase-js");
+const cors = require("cors");
+const bcrypt = require("bcrypt"); // 비밀번호 해싱을 위한 bcrypt 라이브러리
 
+// Express 애플리케이션 생성
 const app = express();
-app.use(express.json());
-app.use(cors());
+const port = 3000; // 서버가 실행될 포트 번호
 
-const SUPABASE_URL = "https://YOUR-SUPABASE-URL.supabase.co";
-const SUPABASE_KEY = "YOUR-SUPABASE-API-KEY";
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+// Supabase 클라이언트 설정
+require("dotenv").config(); //환경변수 로드드
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+// ⚠️ 실제 서비스에서는 API 키를 .env 파일에 저장하세요!
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-const SECRET_KEY = "your_secret_key"; // JWT 서명 키
+// 미들웨어 설정
+app.use(
+  cors({
+    origin: "*",
+    method: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+    credentials: true,
+  })
+); // CORS 설정 (프론트엔드와 통신 허용)
+app.use(express.json()); // JSON 데이터를 처리할 수 있도록 설정
 
-// 회원가입 API
+// 🟢 회원가입 API 엔드포인트
 app.post("/signup", async (req, res) => {
-    const { email, password } = req.body;
+  const { name, user_id, password, mbti } = req.body; // 요청에서 사용자 데이터 추출
 
-    // 비밀번호 해싱
-    const hashedPassword = await bcrypt.hash(password, 10);
+  try {
+    // 비밀번호를 해싱 (암호화)하여 저장
+    const hashedPassword = await bcrypt.hash(password, 10); // 10은 해싱 강도 (높을수록 보안 강화)
 
-    // Supabase users 테이블에 저장
+    // Supabase 데이터베이스에 사용자 추가
     const { data, error } = await supabase
-        .from("users")
-        .insert([{ email, password: hashedPassword }]);
+      .from("users")
+      .insert([{ name, user_id, password: hashedPassword, mbti }]);
 
-    if (error) return res.status(400).json({ message: error.message });
+    if (error) {
+      return res
+        .status(400)
+        .json({ message: "회원가입 실패", error: error.message });
+    }
 
-    res.json({ message: "회원가입 성공!" });
+    res.status(200).json({ message: "회원가입 성공", data }); // 성공 응답 반환
+  } catch (error) {
+    res.status(500).json({ message: "서버 오류 발생", error: error.message });
+  }
 });
 
-// 로그인 API
+// 🟢 로그인 API 엔드포인트
 app.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+  const { user_id, password } = req.body; // 요청에서 사용자 정보 추출
 
-    // Supabase에서 사용자 조회
+  try {
+    // Supabase에서 해당 사용자 찾기
     const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("email", email)
-        .single();
+      .from("users")
+      .select("*")
+      .eq("user_id", user_id)
+      .single(); // 단일 결과 가져오기
 
     if (error || !data) {
-        return res.status(401).json({ message: "이메일이 존재하지 않음" });
+      return res
+        .status(400)
+        .json({ message: "로그인 실패: 아이디가 존재하지 않습니다." });
+    }
+    
+    
+    // 입력된 비밀번호와 데이터베이스에 저장된 해싱된 비밀번호 비교
+    const passwordMatch = await bcrypt.compare(password, data.password);
+    if (!passwordMatch) {
+      return res
+        .status(400)
+        .json({ message: "로그인 실패: 비밀번호가 일치하지 않습니다." });
     }
 
-    // 비밀번호 검증
-    const validPassword = await bcrypt.compare(password, data.password);
-    if (!validPassword) {
-        return res.status(401).json({ message: "비밀번호가 틀림" });
-    }
-
-    // JWT 토큰 생성
-    const token = jwt.sign({ email: data.email }, SECRET_KEY, { expiresIn: "1h" });
-
-    res.json({ token });
+    res.status(200).json({ message: "로그인 성공", data }); // 성공 응답 반환
+  } catch (error) {
+    res.status(500).json({ message: "서버 오류 발생", error: error.message });
+  }
 });
 
-// 서버 실행
-app.listen(3000, () => console.log("서버 실행 중... http://localhost:3000"));
+// 🟢 서버 실행
+app.listen(port, () => {
+  console.log(`✅ 서버가 실행 중: http://localhost:${port}`);
+});
