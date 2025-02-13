@@ -42,21 +42,3 @@ resultButton.addEventListener("click", () => {
   // 2. 페이지 이동
   window.location.href = targetPath;
 });
-
-// 팝업 기능 구현
-const popups = document.querySelectorAll(".popup");
-
-popups.forEach((popup) => {
-  const popuptext = popup.querySelector(".popuptext");
-  const popupBox = popup.querySelector(".popup-box"); // 팝업 박스 요소 선택
-
-  popup.addEventListener("mouseover", () => {
-    popuptext.style.visibility = "visible";
-    popuptext.style.opacity = 1;
-  });
-
-  popup.addEventListener("mouseout", () => {
-    popuptext.style.visibility = "hidden";
-    popuptext.style.opacity = 0;
-  });
-});
