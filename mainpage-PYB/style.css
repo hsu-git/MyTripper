@@ -1,0 +1,167 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+}
+
+.hero {
+  text-align: center;
+  padding: 100px 0;
+}
+
+.mbti-selector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.mbti-category {
+  margin: 10px;
+}
+
+.btn-group {
+  display: inline-block;
+}
+
+.result-button {
+  padding: 15px 30px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.mbti-option {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.mbti-option.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.mbti-option.active {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.mbti-option {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.mbti-option.active,
+.mbti-option:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+#resultButton:disabled {
+  background-color: #ccc;
+  color: #fff;
+  border-color: #ccc;
+  cursor: default;
+}
+
+.popup {
+  position: relative;
+  display: inline-block;
+}
+
+.popup .popuptext {
+  visibility: hidden; /* 초기 상태 숨김 */
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1000; /* z-index 값 변경 */
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+  opacity: 0;
+  transition: opacity 0.8s;
+}
+
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.category-title {
+  display: flex;
+  align-items: center;
+}
+
+.category-title p {
+  margin-right: 10px;
+}
+
+.mbti-category {
+  margin-bottom: 20px;
+}
+
+.popup {
+  position: relative; /* 상대 위치 사용 */
+  display: inline-block;
+}
+
+.popup .popuptext {
+  /* ... other styles ... */
+  white-space: nowrap; /* 텍스트를 한 줄에 표시 */
+  top: auto; /* 팝업 텍스트를 팝업 박스 위에 표시 */
+  bottom: 100%; /* 팝업 텍스트를 팝업 박스 바로 위에 표시 */
+  left: 50%; /* 팝업 텍스트를 팝업 박스 가운데 정렬 */
+  bottom: calc(100% + 5px); /* 팝업 텍스트를 팝업 박스 위 5px 위에 표시 */
+}
+.popup-box {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  margin-left: 5px;
+  cursor: default;
+}

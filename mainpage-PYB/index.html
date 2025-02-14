@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Webcrumbs Plugin</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../_common/header_footer_style.css" />
+    <script src="../_common/header_footer_script.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <nav id="header"></nav>
+
+      <body>
+        <div class="hero">
+          <h1>My Best</h1>
+          <h1>Tr Ip</h1>
+          <p>MBTI 맞춤 여행지 추천</p>
+          <div class="mbti-selector">
+            <div class="mbti-category">
+              <div class="category-title">
+                <p>주의초점</p>
+                <div class="popup">
+                  <span class="popuptext" id="myPopup-focus"
+                    >주의초점에 대한 설명</span
+                  >
+                  <div class="popup-box"></div>
+                </div>
+              </div>
+              <div class="btn-group" data-toggle="buttons">
+                <button class="mbti-option">외향형(E)</button>
+                <button class="mbti-option">내향형(I)</button>
+              </div>
+            </div>
+            <div class="mbti-category">
+              <div class="category-title">
+                <p>인식방식</p>
+                <div class="popup">
+                  <span class="popuptext" id="myPopup-recognize"
+                    >인식방식에 대한 설명</span
+                  >
+                  <div class="popup-box"></div>
+                </div>
+              </div>
+              <div class="btn-group" data-toggle="buttons">
+                <button class="mbti-option">감각형(S)</button>
+                <button class="mbti-option">직관형(N)</button>
+              </div>
+            </div>
+            <div class="mbti-category">
+              <div class="category-title">
+                <p>판단방식</p>
+                <div class="popup">
+                  <span class="popuptext" id="myPopup-judge"
+                    >판단방식에 대한 설명</span
+                  >
+                  <div class="popup-box"></div>
+                </div>
+              </div>
+              <div class="btn-group" data-toggle="buttons">
+                <button class="mbti-option">이성적(T)</button>
+                <button class="mbti-option">감성적(F)</button>
+              </div>
+            </div>
+            <div class="mbti-category">
+              <div class="category-title">
+                <p>행동방식</p>
+                <div class="popup">
+                  <span class="popuptext" id="myPopup-act"
+                    >행동방식에 대한 설명</span
+                  >
+                  <div class="popup-box"></div>
+                </div>
+              </div>
+              <div class="btn-group" data-toggle="buttons">
+                <button class="mbti-option">판단형(J)</button>
+                <button class="mbti-option">인식형(P)</button>
+              </div>
+            </div>
+          </div>
+          <button class="result-button" id="resultButton">결과보기</button>
+        </div>
+      </body>
+      <footer id="footer"></footer>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
+    ></script>
+    <script src="index.js"></script>
+  </body>
+</html>
