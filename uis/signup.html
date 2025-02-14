@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입</title>
+    
+    <!-- css(이의선) -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Header, Footer 적용 -->
+    <link rel="stylesheet" href="/MyTripper/_common/header_footer_style.css" />
+    <script src="/MyTripper/_common/header_footer_script.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.supabase.com/supabase-js-v2.min.js"></script>
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <nav id="header"></nav>
+      <!-- Header -->
+
+      <!-- body -->
+      <h1>회원가입</h1>
+      <form id="signup-form">
+        <input type="text" id="name" placeholder="이름" required>
+        <input type="text" id="user_id" placeholder="아이디" required>
+        <input type="password" id="password" placeholder="비밀번호" required>
+        <input type="text" id="mbti" placeholder="MBTI" required>
+        <button type="submit">회원가입</button>
+      </form>
+    
+      <p>이미 회원이신가요? <a href="login.html">로그인</a></p>    
+
+      <script src="signup.js"></script>
+      <!-- body -->
+        
+
+      <!-- Footer -->
+      <footer id="footer"></footer>
+      <!-- Footer -->
+    </div>
+
+
+    <script>
+      // Bootstrap JS (Optional, for certain components like dropdowns)
+      src =
+        "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js";
+      integrity =
+        "sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN";
+      crossorigin = "anonymous";
+
+    </script>
+  </body>
+</html>
