@@ -1,0 +1,95 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  background-image: url("image.jpg"); /* 배경 이미지 설정 */
+  background-size: cover; /* 화면 전체 채우기 */
+  background-attachment: fixed; /* 스크롤 따라오기 */
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title-area {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.image-area {
+  width: 40%; /* 이미지 영역 너비 조절 */
+  margin-left: 20px; /* 텍스트 영역과의 간격 */
+}
+
+.image-area img {
+  width: 100%;
+  height: auto;
+}
+
+main {
+  padding: 20px;
+}
+
+.details {
+  margin-bottom: 20px;
+}
+
+.details-content {
+  display: flex; /* 상세 정보 영역을 flexbox로 설정 */
+  align-items: flex-start; /* 지역 및 내용 위쪽 정렬 */
+}
+
+.text-area {
+  width: 60%; /* 텍스트 영역 너비 조절 */
+}
+
+.region,
+.content {
+  margin-bottom: 10px;
+}
+
+.search-area {
+  text-align: center;
+}
+
+.search-box {
+  display: flex;
+  justify-content: center;
+}
+
+.search-box input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.search-box button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button-area {
+  display: flex;
+  justify-content: center;
+}
+
+.back-button,
+.info-button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  background-color: #555;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
