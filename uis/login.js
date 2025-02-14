@@ -17,7 +17,7 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
       const result = await response.json(); // 응답을 JSON으로 변환
 
       if (response.ok) {
-          alert("로그인 성공! Welcome, " + result.data.name); // 성공 메시지 표시
+          alert("로그인 성공! 아이디:, " + result.data.name); // 성공 메시지 표시
           // JWT를 localStorage에 저장
           localStorage.setItem('token', result.data.token);
           // 로그인 후 페이지 이동 (예: 메인 페이지)
