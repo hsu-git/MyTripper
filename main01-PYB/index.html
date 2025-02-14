@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Webcrumbs Plugin</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../_common/header_footer_style.css" />
+    <script src="../_common/header_footer_script.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    <style>
+      /* hero 영역에 배경 이미지 설정 */
+      .hero {
+        text-align: center;
+        padding: 100px 0;
+        background-image: url("image1.jpg"); /* 초기 이미지 */
+        background-size: cover;
+        background-repeat: no-repeat;
+        animation: changeBackground 9s infinite; /* 3초마다 변경 */
+      }
+
+      @keyframes changeBackground {
+        0% {
+          background-image: url("image1.jpg");
+        }
+        33% {
+          background-image: url("image2.jpg");
+        }
+        66% {
+          background-image: url("image3.jpg");
+        }
+        100% {
+          background-image: url("image1.jpg");
+        } /* 처음 이미지로 돌아감 */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <nav id="header"></nav>
+
+      <div class="hero">
+        <h1>My Best</h1>
+        <h1>Tr Ip</h1>
+        <p>MBTI 맞춤 여행지 추천</p>
+        <div class="mbti-selector">
+          <div class="mbti-category">
+            <div class="category-title">
+              <p>주의초점</p>
+              <div class="popup">
+                <span class="popuptext" id="myPopup-focus">
+                  외향 (Extroversion) - 자기 외부에 주의 집중. <br />
+                  다른 누군가에게 발상, 지식이나 감정을 표현함으로써 에너지를
+                  얻는다. 사교적, 활동적이며 외부 활동에 적극성을 발휘한다.
+                  폭넓은 대인관계를 가지며 글보다는 말로 표현하기를 좋아한다.
+                  경험을 통해 이해한다. <br /><br />내향 (Introversion) - 자기
+                  내부에 주의 집중. <br />발상, 지식이나 감정에 대한 자각의
+                  깊이를 늘려감으로써 에너지를 얻는다. 조용하고 신중하며 내면
+                  활동에 집중력을 발휘한다. 깊이있는 대인관계를 가지며 말보다는
+                  글로 표현하기를 좋아한다. 이해한 다음 행동한다.
+                </span>
+                <div class="popup-box"></div>
+              </div>
+            </div>
+            <div class="btn-group" data-toggle="buttons">
+              <button class="mbti-option">E(외향형)</button>
+              <button class="mbti-option">I(내향형)</button>
+            </div>
+          </div>
+          <div class="mbti-category">
+            <div class="category-title">
+              <p>인식방식</p>
+              <div class="popup">
+                <span class="popuptext" id="myPopup-recognize">
+                  감각 (Sensing) - 오감 및 경험에 의존. 현실주의적인 타입.<br />
+                  실제의 경험을 중시하고 지금에 초점을 맞추어 일처리한다. 숲보다
+                  나무를 보려는 경향이 강하다. <br /><br />직관 (iNtuition) -
+                  직관 및 영감에 의존. 이상주의적인 타입. <br />아이디어를
+                  중시하며 미래지향적이고 개연성과 의미에 초점을 맞추어
+                  일처리한다. 비유적, 암시적으로 묘사한다. 나무보다 숲을 보려는
+                  경향이 강하며 자신만의 세계가 뚜렷한 편이다.
+                </span>
+                <div class="popup-box"></div>
+              </div>
+            </div>
+            <div class="btn-group" data-toggle="buttons">
+              <button class="mbti-option">S(감각형)</button>
+              <button class="mbti-option">N(직관형)</button>
+            </div>
+          </div>
+          <div class="mbti-category">
+            <div class="category-title">
+              <p>판단방식</p>
+              <div class="popup">
+                <span class="popuptext" id="myPopup-judge">
+                  사고 (Thinking) - 업무 중심 타입.<br />
+                  진실과 사실에 주로 관심을 가지며 '맞다, 틀리다'의 판단 선호.
+                  이성적이고 논리적, 분석적이며 객관적으로 사실을 판단한다.
+                  원리와 원칙을 중시한다. 논평하기를 좋아한다.
+                  <br /><br />감정 (Feeling) - 인간관계 중심 타입.
+                  <br />사람과의 관계에 주로 관심을 가지며 '좋다, 나쁘다'의 판단
+                  선호. 상황적, 포괄적이며 주변 상황을 고려하여 판단한다.
+                  이성보단 감정에 치우치며 의미, 영향, 도덕성을 중시한다.
+                  우호적인 협조, 공감하기를 좋아한다.
+                </span>
+                <div class="popup-box"></div>
+              </div>
+            </div>
+            <div class="btn-group" data-toggle="buttons">
+              <button class="mbti-option">T(이성적)</button>
+              <button class="mbti-option">F(감성적)</button>
+            </div>
+          </div>
+          <div class="mbti-category">
+            <div class="category-title">
+              <p>행동방식</p>
+              <div class="popup">
+                <span class="popuptext" id="myPopup-act">
+                  판단 (Judging) - 분명한 목적과 방향 선호.<br />
+                  계획적이고 체계적이며 기한을 엄수한다. 깔끔하게 정리정돈을
+                  잘하며 뚜렷한 자기의사와 기준으로 신속하게 '판단'하여 결론을
+                  내린다. <br /><br />인식 (Perceiving) - 유동적인 목적과 방향
+                  선호.<br />
+                  자율적이고 체계는 없지만 재량에 따라 일정을 변경할 수 있다.
+                  상황에 따라 적응하며 최대한 많은 정보를 '인식'할 때까지 결정을
+                  보류한다.
+                </span>
+                <div class="popup-box"></div>
+              </div>
+            </div>
+            <div class="btn-group" data-toggle="buttons">
+              <button class="mbti-option">J(판단형)</button>
+              <button class="mbti-option">P(인식형)</button>
+            </div>
+          </div>
+        </div>
+        <button class="result-button" id="resultButton">결과보기</button>
+      </div>
+
+      <footer id="footer"></footer>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+      crossorigin="anonymous"
+    ></script>
+    <script src="index.js"></script>
+  </body>
+</html>
