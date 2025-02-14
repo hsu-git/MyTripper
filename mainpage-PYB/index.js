@@ -34,15 +34,6 @@ mbtiOptions.forEach((option) => {
   });
 });
 
-resultButton.addEventListener("click", () => {
-  // 결과보기 버튼 클릭 시 동작 (기존 코드 유지)
-  // 1. 이동할 페이지 경로 설정
-  const targetPath = "../trrc-PYB/index.html"; // 상대 경로 사용
-
-  // 2. 페이지 이동
-  window.location.href = targetPath;
-});
-
 // 팝업 기능 구현
 const popups = document.querySelectorAll(".popup");
 
@@ -59,4 +50,30 @@ popups.forEach((popup) => {
     popuptext.style.visibility = "hidden";
     popuptext.style.opacity = 0;
   });
+});
+
+resultButton.addEventListener("click", (event) => {
+  event.preventDefault(); // 웹페이지 이동 막기
+
+  let mbtiResult = "";
+
+  // 4가지 카테고리별 선택된 옵션의 알파벳 추출
+  const categories = document.querySelectorAll(".mbti-category");
+  categories.forEach((category) => {
+    const activeOption = category.querySelector(".mbti-option.active");
+    if (activeOption) {
+      const mbtiChar = activeOption.textContent.slice(-2, -1); // 마지막 괄호 안 알파벳 추출
+      mbtiResult += mbtiChar;
+    }
+  });
+
+  // MBTI 결과값 (예: "ESTJ")
+  console.log("MBTI 결과값:", mbtiResult);
+
+  // URL 파라미터에 mbti 값을 포함하여 targetUrl 생성
+  const targetUrl = `../main02-CJH/index.html?mbti=${mbtiResult}`;
+
+  console.log("Target URL:", targetUrl); // targetUrl 확인
+
+  window.location.href = targetUrl;
 });

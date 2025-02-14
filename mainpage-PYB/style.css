@@ -79,12 +79,21 @@ body {
   display: inline-block;
 }
 
+.popup-box {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  margin-left: 5px;
+  cursor: default;
+}
+
 .popup .popuptext {
   visibility: hidden; /* 초기 상태 숨김 */
-  width: 160px;
+  width: 450px;
   background-color: #555;
   color: #fff;
-  text-align: center;
+  text-align: left;
   border-radius: 6px;
   padding: 8px 0;
   position: absolute;
@@ -94,6 +103,11 @@ body {
   margin-left: -80px;
   opacity: 0;
   transition: opacity 0.8s;
+  /* ... other styles ... */
+  white-space: normal; /* 텍스트 줄바꿈 허용 */
+  word-break: break-word; /* 단어 단위 줄바꿈 */
+  overflow-wrap: break-word; /* 단어 단위 줄바꿈 (구 브라우저 지원) */
+  box-sizing: border-box; /* padding, border를 width에 포함 */
 }
 
 .popup .popuptext::after {
@@ -144,24 +158,9 @@ body {
   margin-bottom: 20px;
 }
 
-.popup {
-  position: relative; /* 상대 위치 사용 */
-  display: inline-block;
-}
-
-.popup .popuptext {
-  /* ... other styles ... */
-  white-space: nowrap; /* 텍스트를 한 줄에 표시 */
-  top: auto; /* 팝업 텍스트를 팝업 박스 위에 표시 */
-  bottom: 100%; /* 팝업 텍스트를 팝업 박스 바로 위에 표시 */
-  left: 50%; /* 팝업 텍스트를 팝업 박스 가운데 정렬 */
-  bottom: calc(100% + 5px); /* 팝업 텍스트를 팝업 박스 위 5px 위에 표시 */
-}
-.popup-box {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 1px solid #ccc;
-  margin-left: 5px;
-  cursor: default;
+/* result div 스타일 */
+#result {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
