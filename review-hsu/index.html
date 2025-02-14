@@ -1,42 +1,678 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
+    <!-- =======================
+         기본 문서 설정
+         ======================= -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Webcrumbs Plugin</title>
+    <title>게시판 페이지</title>
 
-    <!-- Header, Footer 적용 -->
-    <link rel="stylesheet" href="/MyTripper/_common/header_footer_style.css" />
-    <script src="/MyTripper/_common/header_footer_script.js"></script>
-    <!-- Bootstrap CSS -->
+    <!-- =======================
+         (1) Bootstrap CSS 로드
+         ======================= -->
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
-      crossorigin="anonymous"
     />
+
+    <!-- ============================
+         (2) 커스텀 CSS 파일 로드
+         ============================ -->
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="../_common/header_footer_style.css" />
+
+    <!-- ==================================================
+         (3) 헤더/푸터 동적 로드를 위한 스크립트 (defer 사용)
+         ================================================== -->
+    <script src="../_common/header_footer_script.js" defer></script>
+
+    <!-- ======================
+         (4) 인라인 스타일
+         ====================== -->
+    <style>
+      /* 본문(main) 좌우 여백 */
+      main {
+        margin-left: 30px;
+        margin-right: 30px;
+      }
+    </style>
   </head>
+
   <body>
+    <!-- ===========================
+         (A) 헤더 섹션
+         스크립트로 header.html을 로드
+         =========================== -->
     <div class="container">
-      <!-- Header -->
       <nav id="header"></nav>
-      <!-- Header -->
-
-      <!-- Body -->
-      <body>
-        <div class="container"></div>
-      </body>
-      <!-- Body -->
-
-      <!-- Footer -->
-      <footer id="footer"></footer>
-      <!-- Footer -->
     </div>
-    <!-- Bootstrap JS (Optional, for certain components like dropdowns) -->
+
+    <!-- ===========================
+         (B) 메인 컨테이너
+         =========================== -->
+    <div class="container mt-4">
+      <!--
+        (B-1) 캐러셀 섹션
+        Bootstrap의 Carousel 컴포넌트를 활용
+      -->
+      <section class="container my-5">
+        <div id="travelCarousel" class="carousel slide" data-bs-ride="carousel">
+          <!-- 캐러셀 인디케이터 (동그라미 버튼) -->
+          <div class="carousel-indicators">
+            <button
+              type="button"
+              data-bs-target="#travelCarousel"
+              data-bs-slide-to="0"
+              class="active"
+              aria-current="true"
+              aria-label="Slide 1"
+            ></button>
+            <button
+              type="button"
+              data-bs-target="#travelCarousel"
+              data-bs-slide-to="1"
+              aria-label="Slide 2"
+            ></button>
+            <button
+              type="button"
+              data-bs-target="#travelCarousel"
+              data-bs-slide-to="2"
+              aria-label="Slide 3"
+            ></button>
+          </div>
+
+          <!-- 캐러셀 아이템들 -->
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img
+                src="https://picsum.photos/id/1015/1200/400"
+                class="d-block w-100"
+                alt="carousel-1"
+              />
+              <div class="carousel-caption d-none d-md-block">
+                <h5>추천 여행지 #1</h5>
+                <p>MBTI 기반 여행 추천</p>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <!-- 랜덤 이미지 생성 -->
+              <img
+                src="https://picsum.photos/1200/400"
+                class="d-block w-100"
+                alt="carousel-2"
+              />
+              <div class="carousel-caption d-none d-md-block">
+                <h5>추천 여행지 #2</h5>
+                <p>자유롭게 떠나볼까?</p>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img
+                src="https://picsum.photos/1200/400"
+                class="d-block w-100"
+                alt="carousel-3"
+              />
+              <div class="carousel-caption d-none d-md-block">
+                <h5>추천 여행지 #3</h5>
+                <p>가족, 친구와 함께</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 이전/다음 버튼 -->
+          <button
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#travelCarousel"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">이전</span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#travelCarousel"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">다음</span>
+          </button>
+        </div>
+      </section>
+
+      <!--
+        (B-2) MBTI 검색 & 텍스트 검색
+        Bootstrap Grid (row, col-md-4, col-md-6, offset-md-2) 사용
+      -->
+      <main>
+        <section class="mb-5">
+          <div class="container text-center">
+            <div class="row align-items-center">
+              <!-- 왼쪽: MBTI 검색 (4칸) -->
+              <div class="col-md-4">
+                <div class="input-group w-100">
+                  <label class="input-group-text" for="mbtiSelect">MBTI</label>
+                  <select class="form-select" id="mbtiSelect">
+                    <option selected>MBTI별 게시글</option>
+                    <option value="ISTJ">ISTJ</option>
+                    <option value="ISFJ">ISFJ</option>
+                    <option value="INFJ">INFJ</option>
+                    <option value="INTJ">INTJ</option>
+                    <option value="ISTP">ISTP</option>
+                    <option value="ISFP">ISFP</option>
+                    <option value="INFP">INFP</option>
+                    <option value="INTP">INTP</option>
+                    <option value="ESTP">ESTP</option>
+                    <option value="ESFP">ESFP</option>
+                    <option value="ENFP">ENFP</option>
+                    <option value="ENTP">ENTP</option>
+                    <option value="ESTJ">ESTJ</option>
+                    <option value="ESFJ">ESFJ</option>
+                    <option value="ENFJ">ENFJ</option>
+                    <option value="ENTJ">ENTJ</option>
+                  </select>
+                  <button class="btn btn-primary" id="btnSearchByMBTI">
+                    검색
+                  </button>
+                </div>
+              </div>
+
+              <!-- 오른쪽: 텍스트 검색 (6칸) + 왼쪽에 2칸 offset -->
+              <div class="col-md-6 offset-md-2">
+                <div class="input-group w-100">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="검색어를 입력하세요"
+                    id="textSearchInput"
+                  />
+                  <button class="btn btn-secondary" id="btnSearchText">
+                    검색
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- (B-3) 예시 필터 버튼들 (정렬/신규 등) -->
+        <!--         
+        <div class="mt-4">
+          <div class="d-flex justify-content-between">
+            <select class="form-select" style="width: 200px">
+              <option>Most viewed</option>
+              <option>Latest</option>
+            </select>
+            <div>
+              <button class="btn btn-dark">New</button>
+              <button class="btn btn-outline-dark">Price ascending</button>
+              <button class="btn btn-outline-dark">Price descending</button>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- (B-4) 예시 카드 목록을 담을 컨테이너 -->
+        <!-- 실제 게시글은 Supabase에서 불러온 뒤 JS로 동적으로 렌더링할 예정 -->
+        <div class="mt-4" id="board-list">
+          <!-- 이 부분에 JS를 통해 카드 목록을 생성하여 넣을 예정 -->
+           <!-- 예시 게시물 -->
+            <!-- 게시글 1 -->
+            <div class="card mb-3 p-3">
+              <div class="d-flex">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background-color: #f0f0f0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <span style="color: gray">이미지</span>
+                </div>
+                <div class="ms-3">
+                  <h5>위 제목을 눌러 보는 목록 - 공공</h5>
+                  <p style="color: gray">
+                    Body text for whatever you'd like to say. Add main takeaway
+                    points, quotes, anecdotes, or even a very very short story.
+                  </p>
+                </div>
+              </div>
+            </div>
+    
+            <!-- 게시글 2 -->
+            <div class="card mb-3 p-3">
+              <div class="d-flex">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background-color: #f0f0f0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <span style="color: gray">이미지</span>
+                </div>
+                <div class="ms-3">
+                  <h5>Title</h5>
+                  <p style="color: gray">
+                    Body text for whatever you'd like to say. Add main takeaway
+                    points, quotes, anecdotes, or even a very very short story.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 게시글 3 -->
+            <div class="card mb-3 p-3">
+              <div class="d-flex">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background-color: #f0f0f0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <span style="color: gray">이미지</span>
+                </div>
+                <div class="ms-3">
+                  <h5>Title</h5>
+                  <p style="color: gray">
+                    Body text for whatever you'd like to say. Add main takeaway
+                    points, quotes, anecdotes, or even a very very short story.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 게시글 4 -->
+            <div class="card mb-3 p-3">
+              <div class="d-flex">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background-color: #f0f0f0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <span style="color: gray">이미지</span>
+                </div>
+                <div class="ms-3">
+                  <h5>Title</h5>
+                  <p style="color: gray">
+                    Body text for whatever you'd like to say. Add main takeaway
+                    points, quotes, anecdotes, or even a very very short story.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 게시글 5 -->
+            <div class="card mb-3 p-3">
+              <div class="d-flex">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background-color: #f0f0f0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <span style="color: gray">이미지</span>
+                </div>
+                <div class="ms-3">
+                  <h5>Title</h5>
+                  <p style="color: gray">
+                    Body text for whatever you'd like to say. Add main takeaway
+                    points, quotes, anecdotes, or even a very very short story.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+                        <!-- 게시글 6 -->
+                        <!-- <div class="card mb-3 p-3">
+                          <div class="d-flex">
+                            <div
+                              style="
+                                width: 80px;
+                                height: 80px;
+                                background-color: #f0f0f0;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                              "
+                            >
+                              <span style="color: gray">이미지</span>
+                            </div>
+                            <div class="ms-3">
+                              <h5>Title</h5>
+                              <p style="color: gray">
+                                Body text for whatever you'd like to say. Add main takeaway
+                                points, quotes, anecdotes, or even a very very short story.
+                              </p>
+                            </div>
+                          </div>
+                        </div> -->
+
+                                    <!-- 게시글 7 -->
+            <!-- <div class="card mb-3 p-3">
+              <div class="d-flex">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background-color: #f0f0f0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <span style="color: gray">이미지</span>
+                </div>
+                <div class="ms-3">
+                  <h5>Title</h5>
+                  <p style="color: gray">
+                    Body text for whatever you'd like to say. Add main takeaway
+                    points, quotes, anecdotes, or even a very very short story.
+                  </p>
+                </div>
+              </div>
+            </div> -->
+
+                        <!-- 게시글 8 -->
+                        <!-- <div class="card mb-3 p-3">
+                          <div class="d-flex">
+                            <div
+                              style="
+                                width: 80px;
+                                height: 80px;
+                                background-color: #f0f0f0;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                              "
+                            >
+                              <span style="color: gray">이미지</span>
+                            </div>
+                            <div class="ms-3">
+                              <h5>Title</h5>
+                              <p style="color: gray">
+                                Body text for whatever you'd like to say. Add main takeaway
+                                points, quotes, anecdotes, or even a very very short story.
+                              </p>
+                            </div>
+                          </div>
+                        </div> -->
+
+
+                                  <!-- 게시글 9 -->
+            <!-- <div class="card mb-3 p-3">
+              <div class="d-flex">
+                <div
+                  style="
+                    width: 80px;
+                    height: 80px;
+                    background-color: #f0f0f0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <span style="color: gray">이미지</span>
+                </div>
+                <div class="ms-3">
+                  <h5>Title</h5>
+                  <p style="color: gray">
+                    Body text for whatever you'd like to say. Add main takeaway
+                    points, quotes, anecdotes, or even a very very short story.
+                  </p>
+                </div>
+              </div>
+            </div> -->
+
+                        <!-- 게시글 10 -->
+                        <!-- <div class="card mb-3 p-3">
+                          <div class="d-flex">
+                            <div
+                              style="
+                                width: 80px;
+                                height: 80px;
+                                background-color: #f0f0f0;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                              "
+                            >
+                              <span style="color: gray">이미지</span>
+                            </div>
+                            <div class="ms-3">
+                              <h5>Title</h5>
+                              <p style="color: gray">
+                                Body text for whatever you'd like to say. Add main takeaway
+                                points, quotes, anecdotes, or even a very very short story.
+                              </p>
+                            </div>
+                          </div>
+                        </div> -->
+                      
+          <!---->
+        </div>
+      </main>
+
+      <!-- (B-5) 페이지네이션 (예시) -->
+      <div class="mt-4 text-center">
+        <nav>
+          <ul class="pagination justify-content-center">
+            <li class="page-item">
+              <a class="page-link" href="#">Previous</a>
+            </li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- (B-6) 푸터 섹션 -->
+      <footer class="mt-5 border-top pt-3">
+        <div class="d-flex justify-content-between">
+          <div>
+            <p style="margin-bottom: 5px">Use cases</p>
+            <p style="color: gray; font-size: small">
+              UI design, UX design, Wireframing
+            </p>
+          </div>
+          <div>
+            <p style="margin-bottom: 5px">Explore</p>
+            <p style="color: gray; font-size: small">
+              Design, Templates, Components
+            </p>
+          </div>
+          <div>
+            <p style="margin-bottom: 5px">Resources</p>
+            <p style="color: gray; font-size: small">
+              Help center, Blog, Repository
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- =======================
+         (C) Bootstrap JS 로드
+         ======================= -->
     <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-      crossorigin="anonymous"
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      defer
     ></script>
+
+    <!-- ============================
+         (D) Supabase 연동 스크립트
+         ============================ -->
+    <!-- <script type="module"> -->
+    <!--        
+        (1) Supabase Client 로드
+        - ESM(ECMAScript Module) 방식 import
+        - 또는 <script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js\">
+        </script> 
+       로 로드 후 window.supabase 등 사용
+      
+      import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+      // (2) 본인의 Supabase 프로젝트 URL, anon key
+      const SUPABASE_URL = 'https://<YOUR-PROJECT>.supabase.co';
+      const SUPABASE_ANON_KEY = '<YOUR-ANON-KEY>';
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // (3) 게시글 목록을 불러오는 함수
+      async function fetchBoardData(mbti = '', searchText = '') {
+        /*
+          A. Nested Join (Foreign Key 설정이 되어있다는 전제)
+             => 'USER_RC_BOARD' 테이블의 * 와,
+                RC_BOARD_REVW(*) (리뷰 테이블) 를 함께 select
+             
+             B. where 절: MBTI 검색, BOARD_TITLE 검색
+                - Supabase에서는 .ilike() 또는 .or()를 통해 간단히 구현 가능
+                - 예시) .ilike('MBTI', '%ISTJ%')
+        */
+        let query = supabase
+          .from('USER_RC_BOARD')
+          .select('*, RC_BOARD_REVW(*)') // RC_BOARD_REVW 테이블과 조인
+          .order('BOARD_ID', { ascending: false });
+
+        // MBTI가 선택되었으면 ilike로 필터링
+        if (mbti && mbti !== 'MBTI별 게시글') {
+          query = query.ilike('MBTI', `%${mbti}%`);
+        }
+
+        // 검색어가 있으면 or()로 BOARD_TITLE 필터링
+        if (searchText) {
+          // 여러 조건을 묶을 때는 supabase or() 문법 사용
+          query = query.or(`BOARD_TITLE.ilike.%${searchText}%,AI_CONTENTS.ilike.%${searchText}%`);
+        }
+
+        // (4) 쿼리 실행
+        const { data, error } = await query;
+
+        // (5) 에러 처리
+        if (error) {
+          console.error('게시글 불러오기 에러:', error);
+          return;
+        }
+
+        // (6) 게시글 목록을 렌더링할 영역
+        const boardList = document.getElementById('board-list');
+        boardList.innerHTML = ''; // 이전 내용 제거
+
+        /*
+          (7) data는 배열 형태로 넘어옵니다.
+              예) [
+                {
+                  USER_ID: ...,
+                  BOARD_ID: ...,
+                  BOARD_TITLE: ...,
+                  AI_PHOTO: ...,
+                  AI_CONTENTS: ...,
+                  MBTI: ...,
+                  RC_BOARD_REVW: [
+                    { BOARD_ID:..., REVW_PHOTO:..., REVW_CONTENTS:... },
+                    ...
+                  ]
+                },
+                ...
+              ]
+        */
+
+        data.forEach((row) => {
+          // 동적으로 카드 요소 생성
+          const cardDiv = document.createElement('div');
+          cardDiv.classList.add('card', 'mb-3', 'p-3');
+
+          // 이미지/제목/내용 영역
+          // (AI_PHOTO나 REVW_PHOTO 등을 어떻게 표시할지는 기획에 따라 다름)
+          cardDiv.innerHTML = `
+            <div class="d-flex">
+              <div
+                style="
+                  width: 80px;
+                  height: 80px;
+                  background-color: #f0f0f0;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+            -->
+                <!-- 실제로는 <img src=\"${row.AI_PHOTO}\" /> 처럼 사용 가능 -->
+                 <!--
+                <span style="color: gray">이미지</span>
+              </div>
+              <div class="ms-3">
+                <h5>${row.BOARD_TITLE ?? 'No Title'}</h5>
+                <p style="color: gray">
+                  ${row.AI_CONTENTS ?? ''}
+                </p>
+                -->
+                <!-- 리뷰(REVW_CONTENTS)도 표시 가능 -->
+                <!--
+                ${
+                  row.RC_BOARD_REVW && row.RC_BOARD_REVW.length > 0
+                    ? `<p style="font-size: small; color: #555;">
+                         리뷰: ${row.RC_BOARD_REVW[0].REVW_CONTENTS ?? ''}
+                       </p>`
+                    : ''
+                }
+                <p style="font-size: small; color: #999;">
+                  MBTI: ${row.MBTI ?? '-'}
+                </p>
+              </div>
+            </div>
+          `;
+
+          // (게시글 클릭 시 상세 페이지로 이동) 등의 로직을 추가할 수 있음
+          // cardDiv.addEventListener('click', () => {
+          //   location.href = `/board_detail.html?boardId=${row.BOARD_ID}`;
+          // });
+
+          boardList.appendChild(cardDiv);
+        });
+      }
+
+      // (8) 검색 버튼 이벤트
+      const btnSearchByMBTI = document.getElementById('btnSearchByMBTI');
+      btnSearchByMBTI.addEventListener('click', () => {
+        const mbtiSelect = document.getElementById('mbtiSelect');
+        // MBTI 선택값만 적용하고, 검색어는 비움
+        fetchBoardData(mbtiSelect.value, '');
+      });
+
+      const btnSearchText = document.getElementById('btnSearchText');
+      btnSearchText.addEventListener('click', () => {
+        const textSearchInput = document.getElementById('textSearchInput');
+        // 검색어만 적용, MBTI는 비움
+        fetchBoardData('', textSearchInput.value);
+      });
+
+      // (9) 페이지가 처음 로드될 때 전체 게시글을 불러오기
+      //     (필요 시 원하는 조건으로 불러오면 됨)
+      fetchBoardData(); -->
+    </script>
   </body>
 </html>
