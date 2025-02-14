@@ -7,24 +7,26 @@ document.getElementById("login-form").addEventListener("submit", async (event) =
   const password = document.getElementById("password").value;
 
   try {
-    // 로그인 요청을 백엔드로 보냄
-    const response = await fetch("https://nifty-curly-map.glitch.me/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id, password }), // JSON 형식으로 데이터 전송
-    });
+      // 로그인 요청을 백엔드로 보냄
+      const response = await fetch("http://localhost:3000/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id, password }), // JSON 형식으로 데이터 전송
+      });
 
-    const result = await response.json(); // 응답을 JSON으로 변환
+      const result = await response.json(); // 응답을 JSON으로 변환
 
-    if (response.ok) {
-      alert("로그인 성공! Welcome, " + result.data.name); // 성공 메시지 표시
-      // 로그인 후 페이지 이동 (예: 메인 페이지)
-      window.location.href = "My_Tripper/_common/index.html";
-    } else {
-      alert("로그인 실패: " + result.message); // 오류 메시지 표시
-    }
+      if (response.ok) {
+          alert("로그인 성공! 아이디:, " + result.data.name); // 성공 메시지 표시
+          // JWT를 localStorage에 저장
+          localStorage.setItem('token', result.data.token);
+          // 로그인 후 페이지 이동 (예: 메인 페이지)
+          window.location.href = "../_common/index.html";
+      } else {
+          alert("로그인 실패: " + result.message); // 오류 메시지 표시
+      }
   } catch (error) {
-    console.error("로그인 중 오류 발생:", error); // 콘솔에 오류 출력
-    alert("로그인 중 문제가 발생했습니다.");
+      console.error("로그인 중 오류 발생:", error); // 콘솔에 오류 출력
+      alert("로그인 중 문제가 발생했습니다.");
   }
 });
