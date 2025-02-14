@@ -20,15 +20,15 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // 환경 변수에서 secret key를 가져오거나 기본값 설정
 
 // 미들웨어 설정
+app.use(express.json()); // JSON 데이터를 처리할 수 있도록 설정
 app.use(
     cors({
         origin: "*",
-        method: "GET,POST,PUT,DELETE",
+        methods: "GET,POST,PUT,DELETE",
         allowedHeaders: "Content-Type,Authorization",
         credentials: true,
     })
 ); // CORS 설정 (프론트엔드와 통신 허용)
-app.use(express.json()); // JSON 데이터를 처리할 수 있도록 설정
 
 // 🟢 회원가입 API 엔드포인트
 app.post("/signup", async (req, res) => {
@@ -99,6 +99,67 @@ app.post("/logout", (req, res) => {
     res.status(200).json({ message: "로그아웃 성공" });
 });
 
+// 🟢 MBTI 기반 비밀번호 재설정 요청 API (보안 취약)
+app.post("/reset-password-mbti", async (req, res) => {
+    const { user_id, mbti } = req.body; // 요청에서 사용자 아이디와 MBTI 추출
+
+    if (!user_id || !mbti) {
+        return res.status(400).json({ message: "아이디와 MBTI를 모두 입력해주세요." });
+    }
+
+    try {
+        // Supabase에서 해당 사용자 찾기 (아이디와 MBTI로 확인)
+        const { data, error } = await supabase
+            .from("users")
+            .select("*")
+            .eq("user_id", user_id)
+            .eq("mbti", mbti) // MBTI 조건 추가
+            .single(); // 단일 결과 가져오기
+
+        if (error || !data) {
+            return res
+                .status(404) // 404 Not Found 에러로 변경 (정보 노출 최소화)
+                .json({ message: "사용자 정보를 찾을 수 없습니다." }); // 오류 메시지 변경 (정보 노출 최소화)
+        }
+
+        // 인증 성공 (MBTI 일치)
+        res.status(200).json({ message: "인증 성공" }); // 성공 응답 반환 (비밀번호 미포함)
+
+    } catch (error) {
+        res.status(500).json({ message: "서버 오류 발생", error: error.message });
+    }
+});
+
+// 🟢 새 비밀번호 설정 API
+app.post("/set-new-password", async (req, res) => {
+    const { user_id, new_password } = req.body; // 요청에서 사용자 아이디와 새 비밀번호 추출
+
+    if (!user_id || !new_password) {
+        return res.status(400).json({ message: "아이디와 새 비밀번호를 모두 입력해주세요." });
+    }
+
+    try {
+        // 새 비밀번호 해싱
+        const hashedNewPassword = await bcrypt.hash(new_password, 10);
+
+        // Supabase 데이터베이스에 새 비밀번호 업데이트
+        const { data, error } = await supabase
+            .from("users")
+            .update({ password: hashedNewPassword }) // 해싱된 새 비밀번호로 업데이트
+            .eq("user_id", user_id); // 아이디 조건
+
+        if (error) {
+            return res
+                .status(400)
+                .json({ message: "비밀번호 재설정 실패", error: error.message });
+        }
+
+        res.status(200).json({ message: "비밀번호 재설정 성공" }); // 성공 응답 반환
+
+    } catch (error) {
+        res.status(500).json({ message: "서버 오류 발생", error: error.message });
+    }
+});
 
 // 🟢 서버 실행
 app.listen(port, () => {
