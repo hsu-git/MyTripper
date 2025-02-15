@@ -1,60 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
-</head>
-<body>
-  <div class="container mt-5">
-    <h2>Login</h2>
-    <form id="login-form">
-      <div class="mb-3">
-        <label for="user_id" class="form-label">User ID</label>
-        <input type="text" id="user_id" class="form-control" required />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인</title>
+    <!-- css(이의선) -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Header, Footer 적용 -->
+    <link rel="stylesheet" href="/MyTripper/_common/header_footer_style.css" />
+    <script src="/MyTripper/_common/header_footer_script.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+    
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <nav id="header"></nav>
+      <!-- Header -->
+
+      <!-- body -->
+
+      <div id="main-sector">
+
+        <h1>로그인</h1>
+      <form id="login-form">
+        <input type="text" id="user_id" placeholder="아이디" required>
+        <input type="password" id="password" placeholder="비밀번호" required>
+        <button type="submit">로그인</button>
+      </form>
+    
+      <p>회원가입하지 않으셨나요? <a href="signup.html">회원가입</a></p>
+    
+      <script src="login.js"></script>
+      
       </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" id="password" class="form-control" required />
-      </div>
-      <button type="submit" class="btn btn-primary">Sign in</button>
-    </form>
-  </div>
+      
+      <!-- body -->
+        
 
-  <script>
-    // 로그인 폼 제출 이벤트 처리
-    document
-      .getElementById("login-form")
-      .addEventListener("submit", async (event) => {
-        event.preventDefault(); // 기본 폼 제출 동작 방지
+      <!-- Footer -->
+      <footer id="footer"></footer>
+      <!-- Footer -->
+    </div>
 
-        const userId = document.getElementById("user_id").value;
-        const password = document.getElementById("password").value;
+    <script>
+      // Bootstrap JS (Optional, for certain components like dropdowns)
+      src =
+        "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js";
+      integrity =
+        "sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN";
+      crossorigin = "anonymous";
 
-        try {
-          // 로그인 API 요청
-          const response = await fetch("http://127.0.0.1:3000/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: userId, password: password }), // 로그인 데이터 전송
-          });
-
-          const result = await response.json();
-
-          if (response.ok) {
-            // 로그인 성공 시 JWT 토큰 저장
-            localStorage.setItem("jwt_token", result.token); // JWT 토큰을 로컬 스토리지에 저장
-            alert("로그인 성공!");
-            window.location.href = "/MyTripper/_common/index.html"; // 로그인 후 메인 페이지로 이동
-          } else {
-            alert("로그인 실패: " + result.error);
-          }
-        } catch (error) {
-          console.error("로그인 중 오류 발생:", error);
-          alert("로그인 중 문제가 발생했습니다.");
-        }
-      });
-  </script>
+    </script>
+    <script src="https://cdn.supabase.com/supabase-js-v2.min.js"></script>
 </body>
-</html>
