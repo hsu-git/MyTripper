@@ -2,6 +2,9 @@
 
 // API 키 (localStorage에서 불러오기) -> .env 에서 불러오도록 수정, 이제 localStorage 사용 안함
 let TOGETHER_API_KEY_JH;
+let TOGETHER_API_KEY_WG;
+let TOGETHER_API_KEY_HS;
+let TOGETHER_API_KEY_IS;
 let GROQ_API_KEY_JH;
 let GEMINI_API_KEY_JH;
 let UNSPLASH_API_KEY_JH;
@@ -41,21 +44,31 @@ const callGemini = async (prompt) => {
   return response.json();
 };
 
-// AI API 호출 함수 (이미지 생성에 사용) (기존과 동일)
+// AI API 호출 함수 (이미지 생성에 사용) (수정)
 async function callAI({ url, model, text, apiKey }) {
   const payload = { model, messages: [{ role: "user", content: text }] };
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${apiKey}`, // ✅ apiKey 파라미터 사용 (이제 .env 에서 불러옴)
+      Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
   });
   if (!response.ok) {
     throw new Error(`API 요청 실패: ${response.status} ${response.statusText}`);
+  } // ✅ API 응답 내용(텍스트)을 먼저 읽어서 변수에 저장 (단 한번만 호출)
+
+  const responseText = await response.text();
+
+  try {
+    // ✅ 저장된 responseText 변수를 JSON.parse() 로 파싱
+    const responseJson = JSON.parse(responseText);
+    return responseJson;
+  } catch (error) {
+    console.error("JSON 파싱 오류:", error);
+    throw error;
   }
-  return response.json();
 }
 
 // 배열 셔플 함수 (Fisher-Yates 알고리즘) (기존과 동일)
@@ -68,23 +81,24 @@ function shuffleArray(array) {
 }
 
 // 이미지 검색 함수 (Unsplash API 호출) (기존과 동일)
-async function searchImages(query) {
-  const apiUrl = `https://api.unsplash.com/search/photos?query=${query}&client_id=${UNSPLASH_API_KEY_JH}`; // ✅ UNSPLASH_API_KEY 변수 사용 (이제 .env 에서 불러옴)
-  try {
-    const response = await fetch(apiUrl);
-    if (!response.ok) {
-      throw new Error(
-        `Unsplash API 요청 실패: ${response.status} ${response.statusText}`
-      );
-    }
-    const data = await response.json();
-    const imageUrls = data.results.map((result) => result.urls.regular);
-    return imageUrls;
-  } catch (error) {
-    console.error("Unsplash API 요청 중 오류 발생:", error);
-    return ["이미지 없음"];
-  }
-}
+// async function searchImages(query) {
+//   const apiUrl = `https://api.unsplash.com/search/photos?query=${query}&client_id=${UNSPLASH_API_KEY_JH}`; // ✅ UNSPLASH_API_KEY 변수 사용 (이제 .env 에서 불러옴)
+//   try {
+//     const response = await fetch(apiUrl);
+//     if (!response.ok) {
+//       throw new Error(
+//         `Unsplash API 요청 실패: ${response.status} ${response.statusText}`
+//       );
+//     }
+//     const data = await response.json();
+//     const imageUrls = data.results.map((result) => result.urls.regular);
+//     return imageUrls;
+//   } catch (error) {
+//     console.error("Unsplash API 요청 중 오류 발생:", error);
+//     return ["이미지 없음"];
+//   }
+// }
+
 // ✅ 정규 표현식 기반 분할 함수 (기존과 동일)
 function splitLocations(locationText) {
   if (!locationText) {
@@ -130,13 +144,19 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
     const keys = await keysResponse.json();
 
-    TOGETHER_API_KEY_JH = keys.TOGETHER_API_KEY;
+    TOGETHER_API_KEY_JH = keys.TOGETHER_API_KEY_JH;
+    TOGETHER_API_KEY_WG = keys.TOGETHER_API_KEY_WG;
+    TOGETHER_API_KEY_HS = keys.TOGETHER_API_KEY_HS;
+    TOGETHER_API_KEY_IS = keys.TOGETHER_API_KEY_IS;
     GROQ_API_KEY_JH = keys.GROQ_API_KEY;
     GEMINI_API_KEY_JH = keys.GEMINI_API_KEY;
     UNSPLASH_API_KEY_JH = keys.UNSPLASH_API_KEY;
 
     console.log("API 키:", {
-      TOGETHER_API_KEY: TOGETHER_API_KEY_JH,
+      TOGETHER_API_KEY_JH: TOGETHER_API_KEY_JH,
+      TOGETHER_API_KEY_WG: TOGETHER_API_KEY_WG,
+      TOGETHER_API_KEY_HS: TOGETHER_API_KEY_HS,
+      TOGETHER_API_KEY_IS: TOGETHER_API_KEY_IS,
       GROQ_API_KEY: GROQ_API_KEY_JH,
       GEMINI_API_KEY: GEMINI_API_KEY_JH,
       UNSPLASH_API_KEY: UNSPLASH_API_KEY_JH,
@@ -186,16 +206,86 @@ document.addEventListener("DOMContentLoaded", async function () {
       `**[한국어 여행 액티비티 추천 1]**\n\n${text} MBTI 유형에게 어울리는 **여행 추천 액티비티** 1가지를 이름만 추천해줘. 예를 들어, 번지점프,수영 처럼 **여행 장소에서 할 수 있는 액티비티** 형태로 추천해줘`
     ).then((res) => res.candidates[0].content.parts[0].text);
 
-    const foodImageURLs = await searchImages(
-      `${foodRecommendationPrompt.trim()} 음식 이미지` // ✅ searchImages 는 이미 UNSPLASH_API_KEY 사용
-    );
-    const activityImageURLs1 = await searchImages(
-      `${activityRecommendationPrompt1.trim()} 액티비티 이미지` // ✅ searchImages 는 이미 UNSPLASH_API_KEY 사용
-    );
-    const activityImageURLs2 = await searchImages(
-      `${activityRecommendationPrompt2.trim()} 액티비티 이미지` // ✅ searchImages 는 이미 UNSPLASH_API_KEY 사용
-    );
+    // ✅ Unsplash API 대신 FLUX 모델을 사용하여 이미지 생성 (음식)
+    const foodImagePrompt = await callAI({
+      url: GROQ_URL,
+      apiKey: GROQ_API_KEY_JH,
+      model: GROQ_LLAMA_MODEL,
+      text: `${foodRecommendationPrompt.trim()} 음식 AI 이미지 생성을 위한 200자 이내의 영어 프롬프트를 작성해줘`,
+    }).then((res) => res.choices[0].message.content);
 
+    const foodPromptJSON = await callAI({
+      url: GROQ_URL,
+      apiKey: GROQ_API_KEY_JH,
+      model: MIXTRAL_MODEL,
+      text: `${foodImagePrompt}에서 AI 이미지 생성을 위해 작성된 200자 이내의 영어 프롬프트를 JSON Object로 prompt라는 key로 JSON string으로 ouput해줘`,
+      jsonMode: true,
+    }).then((res) => JSON.parse(res.choices[0].message.content).prompt);
+
+    const foodImageURLs = await callAI({
+      url: `${TOGETHER_BASE_URL}/v1/images/generations`,
+      apiKey: TOGETHER_API_KEY_WG,
+      model: FLUX_MODEL,
+      text: foodPromptJSON,
+    }).then((res) => [res.data[0].url]); // 배열 형태로 반환 (기존 코드와 통일)
+
+    // ✅ Unsplash API 대신 FLUX 모델을 사용하여 이미지 생성 (액티비티 1)
+    const activityImagePrompt1 = await callAI({
+      url: GROQ_URL,
+      apiKey: GROQ_API_KEY_JH,
+      model: GROQ_LLAMA_MODEL,
+      text: `${activityRecommendationPrompt1.trim()} 액티비티 AI 이미지 생성을 위한 200자 이내의 영어 프롬프트를 작성해줘`,
+    }).then((res) => res.choices[0].message.content);
+
+    const activityPromptJSON1 = await callAI({
+      url: GROQ_URL,
+      apiKey: GROQ_API_KEY_JH,
+      model: MIXTRAL_MODEL,
+      text: `${activityImagePrompt1}에서 AI 이미지 생성을 위해 작성된 200자 이내의 영어 프롬프트를 JSON Object로 prompt라는 key로 JSON string으로 ouput해줘`,
+      jsonMode: true,
+    }).then((res) => JSON.parse(res.choices[0].message.content).prompt);
+
+    const activityImageURLs1 = await callAI({
+      url: `${TOGETHER_BASE_URL}/v1/images/generations`,
+      apiKey: TOGETHER_API_KEY_HS,
+      model: FLUX_MODEL,
+      text: activityPromptJSON1,
+    }).then((res) => [res.data[0].url]); // 배열 형태로 반환 (기존 코드와 통일)
+
+    // ✅ Unsplash API 대신 FLUX 모델을 사용하여 이미지 생성 (액티비티 2)
+    const activityImagePrompt2 = await callAI({
+      url: GROQ_URL,
+      apiKey: GROQ_API_KEY_JH,
+      model: GROQ_LLAMA_MODEL,
+      text: `${activityRecommendationPrompt2.trim()} 액티비티 AI 이미지 생성을 위한 200자 이내의 영어 프롬프트를 작성해줘`,
+    }).then((res) => res.choices[0].message.content);
+
+    const activityPromptJSON2 = await callAI({
+      url: GROQ_URL,
+      apiKey: GROQ_API_KEY_JH,
+      model: MIXTRAL_MODEL,
+      text: `${activityImagePrompt2}에서 AI 이미지 생성을 위해 작성된 200자 이내의 영어 프롬프트를 JSON Object로 prompt라는 key로 JSON string으로 ouput해줘`,
+      jsonMode: true,
+    }).then((res) => JSON.parse(res.choices[0].message.content).prompt);
+
+    const activityImageURLs2 = await callAI({
+      url: `${TOGETHER_BASE_URL}/v1/images/generations`,
+      apiKey: TOGETHER_API_KEY_IS,
+      model: FLUX_MODEL,
+      text: activityPromptJSON2,
+    }).then((res) => [res.data[0].url]); // 배열 형태로 반환 (기존 코드와 통일)
+
+    //UNSPLASH제거-------------------------------------------
+    // const foodImageURLs = await searchImages(
+    //   `${foodRecommendationPrompt.trim()}` // ✅ searchImages 는 이미 UNSPLASH_API_KEY 사용
+    // );
+    // const activityImageURLs1 = await searchImages(
+    //   `${activityRecommendationPrompt1.trim()}` // ✅ searchImages 는 이미 UNSPLASH_API_KEY 사용
+    // );
+    // const activityImageURLs2 = await searchImages(
+    //   `${activityRecommendationPrompt2.trim()}` // ✅ searchImages 는 이미 UNSPLASH_API_KEY 사용
+    // );
+    //--------------------------------------------------------
     resultImageElement.src = image; // (기존과 동일)
     mbtiDescriptionElement.textContent = mbtiDescriptionPrompt.trim(); // (기존과 동일)
 

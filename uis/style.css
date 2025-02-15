@@ -3,6 +3,7 @@ body {
   padding-top: 10px;
   font-family: Arial, sans-serif;
   padding: 20px;
+  
 }
 
 h1 {
@@ -40,4 +41,6 @@ a {
 
 #main-sector {
   justify-items: center;
+  margin: 50px;
+  padding: 100px;
 }
