@@ -99,11 +99,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (!mbtiResult) {
     alert("MBTI 유형이 URL 파라미터로 전달되지 않았습니다."); // 또는 다른 오류 처리
     return; // MBTI 결과 생성 중단
-  } // console.log("전달받은 MBTI 값:", mbtiResult);
-
-  const mbtiResultElement = document.createElement("p");
-  mbtiResultElement.textContent = `전달받은 MBTI 값: ${mbtiResult}`;
-  document.body.appendChild(mbtiResultElement);
+  }
+  console.log("전달받은 MBTI 값:", mbtiResult);
 
   const resultImageElement = document.getElementById("resultImage");
   const mbtiDescriptionElement = document.getElementById("mbtiDescription");
@@ -116,8 +113,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   try {
     // ✅ 서버 API 엔드포인트 호출하여 API 키 가져오기
-    const keysResponse = await fetch("http://localhost:3000/api/keys"); // ✅ 수정: 절대 경로 이후 수정 필요!!!!!!
-    // const keysResponse = await fetch("/api/keys"); // 서버의 API 엔드포인트 호출 (예: /api/keys)
+    const keysResponse = await fetch("http://localhost:3000/api/keys"); // ✅ 수정: 절대 경로 이후 수정 필요!!!!!! // const keysResponse = await fetch("/api/keys"); // 서버의 API 엔드포인트 호출 (예: /api/keys)
     if (!keysResponse.ok) {
       throw new Error(
         `API 키를 불러오는데 실패했습니다: ${keysResponse.status} ${keysResponse.statusText}`
@@ -143,9 +139,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       UNSPLASH_API_KEY: UNSPLASH_API_KEY_JH,
     });
 
-    const text = mbtiResult; // ✅ URL 파라미터에서 받은 MBTI 값을 text 변수에 할당
-    // 이미지, MBTI 설명, 추천 음식/액티비티 생성
-
+    const text = mbtiResult; // ✅ URL 파라미터에서 받은 MBTI 값을 text 변수에 할당 // 이미지, MBTI 설명, 추천 음식/액티비티 생성
     const imagePrompt = await callAI({
       url: GROQ_URL,
       apiKey: GROQ_API_KEY_JH, // ✅ .env 에서 불러온 GROQ_API_KEY 사용
@@ -153,19 +147,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       text: `${text}에 해당하는 MBTI에 어울리는 AI 이미지 생성을 위한 200자 이내의 영어 프롬프트를 작성해줘`,
     }).then((res) => res.choices[0].message.content);
 
-    const promptJSON = await callAI({
-      url: GROQ_URL,
-      apiKey: GROQ_API_KEY_JH, // ✅ .env 에서 불러온 GROQ_API_KEY 사용
-      model: MIXTRAL_MODEL,
-      text: `${imagePrompt}에서 AI 이미지 생성을 위해 작성된 200자 이내의 영어 프롬프트를 JSON Object로 prompt라는 key로 JSON string으로 ouput해줘`,
-      jsonMode: true,
-    }).then((res) => JSON.parse(res.choices[0].message.content).prompt);
-
     const image = await callAI({
       url: `${TOGETHER_BASE_URL}/v1/images/generations`,
       apiKey: TOGETHER_API_KEY_JH, // ✅ .env 에서 불러온 TOGETHER_API_KEY 사용
       model: FLUX_MODEL,
-      text: promptJSON,
+      text: imagePrompt, // ✅ promptJSON 대신 imagePrompt 를 바로 사용
     }).then((res) => res.data[0].url);
 
     const mbtiDescriptionPrompt = await callGemini(
@@ -185,10 +171,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const activityRecommendationPrompt2 = await callGemini(
       // ✅ callGemini 는 이미 GEMINI_API_KEY 사용
-      `**[한국어 여행 액티비티 추천 1]**\n\n${text} MBTI 유형에게 어울리는 **여행 추천 액티비티** 1가지를 이름만 추천해줘. 예를 들어, 번지점프,수영 처럼 **여행 장소에서 할 수 있는 액티비티** 형태로 추천해줘`
-    ).then((res) => res.candidates[0].content.parts[0].text);
+      `**[한국어 여행 액티비티 추천 2]**\n\n${text} MBTI 유형에게 어울리는 **여행 추천 액티비티** 1가지를 이름만 추천해줘. 예를 들어, 번지점프,수영 처럼 **여행 장소에서 할 수 있는 액티비티** 형태로 추천해줘. **단, 이전에 추천한 액티비티와 다른 것**으로 추천해줘`
+    ).then((res) => res.candidates[0].content.parts[0].text); // ✅ Unsplash API 대신 FLUX 모델을 사용하여 이미지 생성 (음식)
 
-    // ✅ Unsplash API 대신 FLUX 모델을 사용하여 이미지 생성 (음식)
     const foodImagePrompt = await callAI({
       url: GROQ_URL,
       apiKey: GROQ_API_KEY_JH,
@@ -196,22 +181,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       text: `${foodRecommendationPrompt.trim()} 음식 AI 이미지 생성을 위한 200자 이내의 영어 프롬프트를 작성해줘`,
     }).then((res) => res.choices[0].message.content);
 
-    const foodPromptJSON = await callAI({
-      url: GROQ_URL,
-      apiKey: GROQ_API_KEY_JH,
-      model: MIXTRAL_MODEL,
-      text: `${foodImagePrompt}에서 AI 이미지 생성을 위해 작성된 200자 이내의 영어 프롬프트를 JSON Object로 prompt라는 key로 JSON string으로 ouput해줘`,
-      jsonMode: true,
-    }).then((res) => JSON.parse(res.choices[0].message.content).prompt);
-
     const foodImageURLs = await callAI({
       url: `${TOGETHER_BASE_URL}/v1/images/generations`,
       apiKey: TOGETHER_API_KEY_WG,
       model: FLUX_MODEL,
-      text: foodPromptJSON,
-    }).then((res) => [res.data[0].url]); // 배열 형태로 반환 (기존 코드와 통일)
+      text: foodImagePrompt, // ✅ foodPromptJSON 대신 foodImagePrompt 를 바로 사용
+    }).then((res) => [res.data[0].url]); // 배열 형태로 반환 (기존 코드와 통일) // ✅ Unsplash API 대신 FLUX 모델을 사용하여 이미지 생성 (액티비티 1)
 
-    // ✅ Unsplash API 대신 FLUX 모델을 사용하여 이미지 생성 (액티비티 1)
     const activityImagePrompt1 = await callAI({
       url: GROQ_URL,
       apiKey: GROQ_API_KEY_JH,
@@ -219,22 +195,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       text: `${activityRecommendationPrompt1.trim()} 액티비티 AI 이미지 생성을 위한 200자 이내의 영어 프롬프트를 작성해줘`,
     }).then((res) => res.choices[0].message.content);
 
-    const activityPromptJSON1 = await callAI({
-      url: GROQ_URL,
-      apiKey: GROQ_API_KEY_JH,
-      model: MIXTRAL_MODEL,
-      text: `${activityImagePrompt1}에서 AI 이미지 생성을 위해 작성된 200자 이내의 영어 프롬프트를 JSON Object로 prompt라는 key로 JSON string으로 ouput해줘`,
-      jsonMode: true,
-    }).then((res) => JSON.parse(res.choices[0].message.content).prompt);
-
     const activityImageURLs1 = await callAI({
       url: `${TOGETHER_BASE_URL}/v1/images/generations`,
       apiKey: TOGETHER_API_KEY_HS,
       model: FLUX_MODEL,
-      text: activityPromptJSON1,
-    }).then((res) => [res.data[0].url]); // 배열 형태로 반환 (기존 코드와 통일)
+      text: activityImagePrompt1, // ✅ activityPromptJSON1 대신 activityImagePrompt1 를 바로 사용
+    }).then((res) => [res.data[0].url]); // 배열 형태로 반환 (기존 코드와 통일) // ✅ Unsplash API 대신 FLUX 모델을 사용하여 이미지 생성 (액티비티 2)
 
-    // ✅ Unsplash API 대신 FLUX 모델을 사용하여 이미지 생성 (액티비티 2)
     const activityImagePrompt2 = await callAI({
       url: GROQ_URL,
       apiKey: GROQ_API_KEY_JH,
@@ -242,19 +209,11 @@ document.addEventListener("DOMContentLoaded", async function () {
       text: `${activityRecommendationPrompt2.trim()} 액티비티 AI 이미지 생성을 위한 200자 이내의 영어 프롬프트를 작성해줘`,
     }).then((res) => res.choices[0].message.content);
 
-    const activityPromptJSON2 = await callAI({
-      url: GROQ_URL,
-      apiKey: GROQ_API_KEY_JH,
-      model: MIXTRAL_MODEL,
-      text: `${activityImagePrompt2}에서 AI 이미지 생성을 위해 작성된 200자 이내의 영어 프롬프트를 JSON Object로 prompt라는 key로 JSON string으로 ouput해줘`,
-      jsonMode: true,
-    }).then((res) => JSON.parse(res.choices[0].message.content).prompt);
-
     const activityImageURLs2 = await callAI({
       url: `${TOGETHER_BASE_URL}/v1/images/generations`,
       apiKey: TOGETHER_API_KEY_IS,
       model: FLUX_MODEL,
-      text: activityPromptJSON2,
+      text: activityImagePrompt2, // ✅ activityPromptJSON2 대신 activityImagePrompt2 를 바로 사용
     }).then((res) => [res.data[0].url]); // 배열 형태로 반환 (기존 코드와 통일)
 
     resultImageElement.src = image;
@@ -292,8 +251,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         );
         console.log("locationPrompt:", locationPrompt);
         const locationText =
-          locationPrompt.candidates[0].content.parts[0].text.trim(); // console.log("locationText:", locationText); // // locationText 로그  // // locationText 로그 // ✅ 쉼표로 구분된 지역 텍스트를 배열로 분할
-        const locations = splitLocations(locationText); // ✅ 정규 표현식 기반 분할 함수 사용  // console.log("locations:", locations); // locations 배열 로그  // ✅ 분할된 지역들을 locationRecommendations 배열에 추가
+          locationPrompt.candidates[0].content.parts[0].text.trim(); // console.log("locationText:", locationText); // // locationText 로그  // // locationText 로그 // ✅ 쉼표로 구분된 지역 텍스트를 배열로 분할
+        const locations = splitLocations(locationText); // ✅ 정규 표현식 기반 분할 함수 사용  // console.log("locations:", locations); // locations 배열 로그  // ✅ 분할된 지역들을 locationRecommendations 배열에 추가
         locationRecommendations.push(...locations);
       } catch (error) {
         console.error("Gemini API 호출 오류:", error);
@@ -308,9 +267,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     console.log(
       "locationRecommendations.length:",
       locationRecommendations.length
-    ); // 배열 길이 로그
-    // ✅ 버튼 텍스트 업데이트 (각 카드별로 3개씩)
-
+    ); // 배열 길이 로그 // ✅ 버튼 텍스트 업데이트 (각 카드별로 3개씩)
     for (let i = 0; i < shuffledItems.length; i++) {
       // shuffledItems 순회 (3번)
       for (let j = 0; j < 3; j++) {
@@ -326,18 +283,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       button.addEventListener("click", function () {
         // ✅ 클릭된 버튼의 텍스트 내용
         const locationText = this.textContent;
-        console.log("선택된 지역:", locationText);
+        console.log("선택된 지역:", locationText); // ✅ 현재 버튼이 속한 카드 요소 찾기
 
-        // ✅ 현재 버튼이 속한 카드 요소 찾기
         const cardIndex = Math.floor(index / 3);
         const selectedCardContentElement = cardContentElements[cardIndex];
         const itemText = selectedCardContentElement.textContent;
-        console.log("선택된 아이템:", itemText);
+        console.log("선택된 아이템:", itemText); // ✅ main03-PYB/index.html로 전달할 URL 생성
 
-        // ✅ main03-PYB/index.html로 전달할 URL 생성
-        const targetUrl = `../main03-PYB/index.html?mbti=${mbtiResult}&location=${locationText}&item=${itemText}`;
+        const targetUrl = `../main03-PYB/index.html?mbti=${mbtiResult}&location=${locationText}&item=${itemText}`; // ✅ main03-PYB/index.html로 페이지 이동
 
-        // ✅ main03-PYB/index.html로 페이지 이동
         window.location.href = targetUrl;
       });
     });
@@ -349,5 +303,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     locationButtonElements.forEach((element) => {
       element.textContent = "지역 추천 실패";
     });
+    resultImageElement.src = "이미지 없음"; // 메인 이미지 오류 시 "이미지 없음" 표시
   }
 });
