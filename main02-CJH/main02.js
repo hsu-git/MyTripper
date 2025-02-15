@@ -159,6 +159,18 @@ document.addEventListener("DOMContentLoaded", async function () {
       `**[한국어로 MBTI 유형 설명]**\n\n${text} MBTI 유형에 대해 40자 이내로 한국어로 설명해줘`
     ).then((res) => res.candidates[0].content.parts[0].text);
 
+    const koreanCelebrityPrompt = await callGemini(
+      `**[${text} 한국 연예인 이름]**\n\n  ${text}인 한국 연예인 3명을 이름만 알려줘`
+    ).then((res) => res.candidates[0].content.parts[0].text);
+
+    const animeCharacterPrompt = await callGemini(
+      `**[${text} 애니 캐릭터 이름]**\n\n${text}인 애니메이션 캐릭터 3명을 이름만 알려줘`
+    ).then((res) => res.candidates[0].content.parts[0].text);
+
+    const mbtiKeywordsPrompt = await callGemini(
+      `**[MBTI 관련 키워드 추천]**\n\n${text} MBTI 유형을 **대표하는 키워드** 3개를 10자 이내로 추천해줘`
+    ).then((res) => res.candidates[0].content.parts[0].text);
+
     const foodRecommendationPrompt = await callGemini(
       // ✅ callGemini 는 이미 GEMINI_API_KEY 사용
       `**[한국어 음식 추천]**\n\n${text} MBTI 유형에 어울리는 한국 음식 1가지를 이름만 추천해줘`
@@ -218,6 +230,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     resultImageElement.src = image;
     mbtiDescriptionElement.textContent = mbtiDescriptionPrompt.trim();
+
+    mbtiDescriptionElement.textContent = mbtiDescriptionPrompt.trim();
+
+    // ✅ mbtiDescriptionElement 에 추가 정보 appendChild 로 추가
+    const koreanCelebrityElement = document.createElement("p");
+    koreanCelebrityElement.textContent = `\n\n${mbtiResult}와 유사한 한국 연예인: ${koreanCelebrityPrompt.trim()}`;
+    mbtiDescriptionElement.appendChild(koreanCelebrityElement);
+
+    const animeCharacterElement = document.createElement("p");
+    animeCharacterElement.textContent = `\n\n${mbtiResult}와 유사한 캐릭터: ${animeCharacterPrompt.trim()}`;
+    mbtiDescriptionElement.appendChild(animeCharacterElement);
+
+    const mbtiKeywordsElement = document.createElement("p");
+    mbtiKeywordsElement.textContent = `\n\n${mbtiResult} 키워드: ${mbtiKeywordsPrompt.trim()}`;
+    mbtiDescriptionElement.appendChild(mbtiKeywordsElement);
+
+    // ✅ "결과 3개를 나열해드릴게요" 텍스트 추가
+    const 안내Element = document.createElement("p");
+    안내Element.textContent = `\n\n이제 결과 3개를 나열해드릴게요!`;
+    mbtiDescriptionElement.appendChild(안내Element);
 
     const resultItems = [
       { text: foodRecommendationPrompt.trim(), image: foodImageURLs[0] },
