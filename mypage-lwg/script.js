@@ -39,8 +39,7 @@ async function getInfo() {
   const password = document.getElementById('infoPwd');
   const mbti = document.getElementById('infoMbti');
 
-  // TODO. 로그인 시 해당 코드 수정 필요!!
-  userData.id = 14;
+  userData.id = localStorage.getItem('user_id');
   try {
     const response = await fetch(`${dbUrl}/myinfo?id=${userData.id}`, {
       method: 'GET',
