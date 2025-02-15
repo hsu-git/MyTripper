@@ -20,13 +20,25 @@
           <a class="nav-link" href="../mainpage-PYB/index.html">Main</a>
         </li>
         <li class="header-nav-item">
-          <a class="nav-link" href="#">Community</a>
+          <a class="nav-link" href="../review-hsu/index.html">Community</a>
         </li>
+        <!-- Sign In 버튼, 로그인 상태에서만 보임 -->
         <li class="header-nav-item">
-          <button class="btn btn-outline-secondary" type="button">Sign in</button>
+          <button class="btn btn-outline-secondary" type="button" id="sign-in-btn" onclick="location.href='../uis/login.html'">
+            Sign in
+          </button>
         </li>
+        <!-- Register 버튼, 로그인 상태에서만 보임 -->
+        <li class="header-nav-item">
+          <button class="btn btn-outline-secondary" type="button" id="register-btn" onclick="location.href='../uis/signup.html'">
+            Register
+          </button>
+        </li>
+        <!-- Log Out 버튼, 로그인 상태에서만 보임 -->
         <li class="header-nav-item-end">
-          <button class="btn btn-dark" type="button">Register</button>
+          <button class="btn btn-dark" type="button" id="logout-btn" style="display:none;" onclick="location.href='index.html'">
+            Log out
+          </button>
         </li>
       </ul>
     </div>

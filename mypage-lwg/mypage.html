@@ -41,30 +41,22 @@
           <!-- 정보 변경 Form -->
           <section class="col-md-9">
             <div class="bg-white border rounded-3 shadow-sm p-4">
-              <form>
-                <div class="mb-3">
-                  <label class="form-label">Name</label>
-                  <input type="text" placeholder="Value" class="form-control" />
-                </div>
+              <form id="infoForm">
                 <div class="mb-3">
                   <label class="form-label">ID</label>
-                  <input type="text" placeholder="Value" class="form-control" />
+                  <input type="text" id="infoId" name="info" class="form-control" readonly />
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Password</label>
-                  <input
-                    type="password"
-                    placeholder="Value"
-                    class="form-control"
-                  />
+                  <input type="password" id="infoPwd" name="info" class="form-control" />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Name</label>
+                  <input type="text" id="infoName" name="info" class="form-control" />
                 </div>
                 <div class="mb-3">
                   <label class="form-label">MBTI</label>
-                  <input type="text" placeholder="Value" class="form-control" />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">가입일</label>
-                  <input type="text" placeholder="Value" class="form-control" />
+                  <input type="text" id="infoMbti" name="info" class="form-control" />
                 </div>
                 <button class="btn btn-dark">정보 수정</button>
               </form>
