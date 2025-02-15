@@ -121,7 +121,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   try {
     // ✅ 서버 API 엔드포인트 호출하여 API 키 가져오기
-    const keysResponse = await fetch("/api/keys"); // 서버의 API 엔드포인트 호출 (예: /api/keys)
+    const keysResponse = await fetch("http://localhost:3000/api/keys"); // ✅ 수정: 절대 경로 이후 수정 필요!!!!!!
+    // const keysResponse = await fetch("/api/keys"); // 서버의 API 엔드포인트 호출 (예: /api/keys)
     if (!keysResponse.ok) {
       throw new Error(
         `API 키를 불러오는데 실패했습니다: ${keysResponse.status} ${keysResponse.statusText}`
