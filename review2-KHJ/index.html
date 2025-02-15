@@ -46,7 +46,7 @@
       .carousel-image {
         width: 100%;
         height: auto;
-        max-height: 500px; /* Carousel 최대 높이 설정 */
+        max-height: 400px; /* Carousel 최대 높이 설정 */
         object-fit: cover; /* 이미지가 Carousel에 맞춰 잘리도록 설정 */
       }
 
@@ -71,6 +71,11 @@
       .comment-form textarea {
         resize: vertical; /* 댓글창 높이 조절 가능하도록 설정 */
       }
+
+      .comment-actions {
+        display: inline-block; /* 수정, 삭제 버튼을 같은 줄에 배치 */
+        margin-left: 10px; /* 버튼 간 간격 추가 */
+      }
     </style>
   </head>
 
@@ -89,21 +94,21 @@
                 <div class="carousel-inner">
                   <div class="carousel-item active">
                     <img
-                      src="image1.jpg"
+                      src="https://picsum.photos/1200/400"
                       class="d-block w-100 carousel-image"
                       alt="Image 1"
                     />
                   </div>
                   <div class="carousel-item">
                     <img
-                      src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDExMjRfMTU5%2FMDAxNzMyNDMyMzgzOTQ0.2kEggzBeMxTUaRXNPByjLqZFohehSAp8nrc9tKKIkmcg.5kPe8-rIy5ZHtUZV_tajEOZg6wsdOaTTaybReYjhYR0g.JPEG%2F900%25A3%25DFScreenshot%25A3%25DF20241124%25A3%25DF161211.jpg&type=sc960_832"
+                      src="https://picsum.photos/id/100/1200/400"
                       class="d-block w-100 carousel-image"
                       alt="Image 2"
                     />
                   </div>
                   <div class="carousel-item">
                     <img
-                      src="image3.jpg"
+                      src="https://picsum.photos/id/200/1200/400"
                       class="d-block w-100 carousel-image"
                       alt="Image 3"
                     />
@@ -142,62 +147,113 @@
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
       crossorigin="anonymous"
     ></script>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script type="module">
+      // Supabase 클라이언트 초기화
+      const SUPABASE_URL = "https://hvkejvcyejfzecclrlkm.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh2a2VqdmN5ZWpmemVjY2xybGttIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkyMzY1MzcsImV4cCI6MjA1NDgxMjUzN30.A7NDpEni7CZaY6tjEc0imu7jdNkD07Cz1Cm35MArmFM";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
       // URL에서 후기 ID 추출
       const urlParams = new URLSearchParams(window.location.search);
       const reviewId = urlParams.get("id");
 
-      // 후기 데이터 가져오기 (예시)
-      const reviews = {
-        1: {
-          title: "정말 좋았어요!",
-          content:
-            "이 제품은 정말 맘에 들어요. 배송도 빠르고 품질도 좋아요. 강력 추천합니다!",
-          author: "user1",
-          date: "2024-05-15",
-          comments: [
-            {
-              author: "user2",
-              content: "저도 공감해요! 정말 좋은 제품이에요.",
-            },
-            {
-              author: "user3",
-              content: "저도 써봤는데, 가격 대비 성능 최고인 것 같아요!",
-            },
-          ],
-        },
-        2: {
-          title: "아쉬운 점도 있지만...",
-          content:
-            "디자인은 예쁜데, 성능이 조금 아쉽네요. 그래도 가격 대비 괜찮은 것 같아요.",
-          author: "user2",
-          date: "2024-05-10",
-          comments: [],
-        },
-        // ... 추가적인 후기 데이터
-      };
+      let currentUserId = "본인 user id"; // 임시 사용자 ID, 실제로는 로그인된 사용자 ID를 가져와야 함.
 
-      // 후기 ID에 해당하는 데이터 표시
-      if (reviewId && reviews[reviewId]) {
-        const review = reviews[reviewId];
-        document.getElementById("review-title").textContent = review.title;
-        document.getElementById("review-content").textContent = review.content;
-        document.getElementById("review-author").textContent = review.author;
-        document.getElementById("review-date").textContent = review.date;
+      async function fetchReview(reviewId) {
+        const { data, error } = await supabase
+          .from("reviews")
+          .select("title, content, author_id, created_at, users(username)")
+          .eq("id", reviewId)
+          .single();
 
-        // 댓글 표시
-        const commentsContainer = document.getElementById("comments-container");
-        review.comments.forEach((comment) => {
-          addCommentToPage(comment); // 댓글을 페이지에 추가하는 함수 호출
-        });
-      } else {
-        // 후기 데이터가 없을 경우 예외 처리
-        document.getElementById("review-title").textContent = "후기 없음";
-        document.getElementById("review-content").textContent =
-          "해당 후기를 찾을 수 없습니다.";
+        if (error) {
+          console.error("Error fetching review:", error);
+          return null;
+        }
+
+        return data;
       }
 
-      // Carousel 자동 넘기기
+      async function fetchComments(reviewId) {
+        const { data, error } = await supabase
+          .from("comments")
+          .select("id, content, author_id, created_at, users(username)") // id 추가
+          .eq("review_id", reviewId)
+          .order("created_at");
+
+        if (error) {
+          console.error("Error fetching comments:", error);
+          return [];
+        }
+
+        return data;
+      }
+
+      async function createComment(reviewId, content) {
+        const { data, error } = await supabase.from("comments").insert([
+          {
+            review_id: reviewId,
+            content: content,
+            author_id: currentUserId, // 현재 사용자 ID
+          },
+        ]);
+
+        if (error) {
+          console.error("Error creating comment:", error);
+        }
+
+        return data;
+      }
+
+      async function updateComment(commentId, content) {
+        const { error } = await supabase
+          .from("comments")
+          .update({ content: content })
+          .eq("id", commentId);
+
+        if (error) {
+          console.error("Error updating comment:", error);
+        }
+      }
+
+      async function deleteComment(commentId) {
+        const { error } = await supabase
+          .from("comments")
+          .delete()
+          .eq("id", commentId);
+
+        if (error) {
+          console.error("Error deleting comment:", error);
+        }
+      }
+
+      if (reviewId) {
+        const review = await fetchReview(reviewId);
+
+        if (review) {
+          document.getElementById("review-title").textContent = review.title;
+          document.getElementById("review-content").textContent =
+            review.content;
+          document.getElementById("review-author").textContent =
+            review.users.username;
+          document.getElementById("review-date").textContent =
+            review.created_at;
+
+          const comments = await fetchComments(reviewId);
+          const commentsContainer =
+            document.getElementById("comments-container");
+          comments.forEach((comment) => {
+            addCommentToPage(comment);
+          });
+        } else {
+          document.getElementById("review-title").textContent = "후기 없음";
+          document.getElementById("review-content").textContent =
+            "해당 후기를 찾을 수 없습니다.";
+        }
+      }
+
       const carousel = new bootstrap.Carousel(
         document.getElementById("reviewCarousel"),
         {
@@ -205,33 +261,26 @@
         }
       );
 
-      // 댓글 작성 기능
       const commentForm = document.querySelector(".comment-form");
       commentForm.addEventListener("submit", (event) => {
         event.preventDefault();
         const commentText = commentForm.querySelector("textarea").value;
-        const userId = "사용자ID"; // 임시 사용자 ID (실제로는 로그인된 사용자 ID 사용)
-        const newComment = {
-          author: userId,
-          content: commentText,
-        };
 
-        // 댓글 데이터에 추가 (예시)
-        if (reviews[reviewId]) {
-          reviews[reviewId].comments.push(newComment);
-          addCommentToPage(newComment); // 페이지에 댓글 추가
-        }
-
-        commentForm.reset();
+        createComment(reviewId, commentText).then((newComment) => {
+          if (newComment) {
+            addCommentToPage(newComment[0]);
+            commentForm.reset();
+          }
+        });
       });
 
-      // 댓글을 페이지에 추가하는 함수
       function addCommentToPage(comment) {
         const commentsContainer = document.getElementById("comments-container");
         const commentDiv = document.createElement("div");
         commentDiv.classList.add("comment");
+        commentDiv.dataset.commentId = comment.id; // data-comment-id 속성 추가
         commentDiv.innerHTML = `
-                <div class="comment-author">${comment.author}</div>
+                <div class="comment-author">${comment.users.username}</div>
                 <div class="comment-content">${comment.content}</div>
                 <div class="comment-actions">
                     <button class="btn btn-sm btn-link comment-edit">수정</button>
@@ -240,18 +289,43 @@
             `;
         commentsContainer.appendChild(commentDiv);
 
-        // 댓글 수정 기능
         const editButton = commentDiv.querySelector(".comment-edit");
         editButton.addEventListener("click", () => {
-          // 수정 기능 구현 (예: 댓글 내용 수정 폼 표시)
-          alert("수정 기능 구현 예정");
+          const commentContent = commentDiv.querySelector(".comment-content");
+          const editForm = document.createElement("form");
+          editForm.innerHTML = `
+                    <textarea>${comment.content}</textarea>
+                    <button type="submit">저장</button>
+                    <button type="button">취소</button>
+                `;
+
+          commentDiv.replaceChild(editForm, commentContent);
+
+          editForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const newContent = editForm.querySelector("textarea").value;
+            const commentId = commentDiv.dataset.commentId; // commentId 가져오기
+
+            updateComment(commentId, newContent).then(() => {
+              comment.content = newContent; // 댓글 내용 업데이트
+              commentContent.textContent = newContent; // 화면 내용 업데이트
+              commentDiv.replaceChild(commentContent, editForm); // 수정 폼 제거
+            });
+          });
+
+          editForm
+            .querySelector('button[type="button"]')
+            .addEventListener("click", () => {
+              commentDiv.replaceChild(commentContent, editForm);
+            });
         });
 
-        // 댓글 삭제 기능
         const deleteButton = commentDiv.querySelector(".comment-delete");
         deleteButton.addEventListener("click", () => {
-          // 삭제 기능 구현 (예: 댓글 데이터 삭제 후 화면 갱신)
-          commentDiv.remove(); // 댓글 화면에서 삭제
+          const commentId = commentDiv.dataset.commentId; // commentId 가져오기
+          deleteComment(commentId).then(() => {
+            commentDiv.remove();
+          });
         });
       }
     </script>
