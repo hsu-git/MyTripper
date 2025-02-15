@@ -1,0 +1,20 @@
+/* 메인 영역 좌우 여백 (필요하다면) */
+main {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+/* 카드 내 이미지 placeholder */
+.card-img-placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 텍스트 색상 */
+.text-gray {
+  color: gray;
+}
