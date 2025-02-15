@@ -2,10 +2,7 @@ body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  background-image: url("image.jpg");
-  background-size: cover;
-  background-attachment: fixed;
-  color: white !important; /* 텍스트 색상 흰색으로 변경 */
+  color: rgb(18, 3, 3) !important; /* 텍스트 색상 흰색으로 변경 */
 }
 .header-content {
   display: flex;
