@@ -110,7 +110,8 @@ body {
 .popup .popuptext {
   visibility: hidden; /* 초기 상태 숨김 */
   width: 450px;
-  background-color: #555;
+  backdrop-filter: blur(2px); /* 블러 효과 적용 */
+  background-color: rgba(255, 255, 255, 0.2);
   color: #fff;
   text-align: left;
   border-radius: 6px;
