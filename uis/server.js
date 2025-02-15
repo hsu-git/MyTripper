@@ -132,15 +132,15 @@ app.post("/reset-password-mbti", async (req, res) => {
 
 // 🟢 새 비밀번호 설정 API
 app.post("/set-new-password", async (req, res) => {
-    const { user_id, new_password } = req.body; // 요청에서 사용자 아이디와 새 비밀번호 추출
+    const { user_id, newPassword } = req.body; // 요청에서 사용자 아이디와 새 비밀번호 추출
 
-    if (!user_id || !new_password) {
+    if (!user_id || !newPassword) {
         return res.status(400).json({ message: "아이디와 새 비밀번호를 모두 입력해주세요." });
     }
 
     try {
         // 새 비밀번호 해싱
-        const hashedNewPassword = await bcrypt.hash(new_password, 10);
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
         // Supabase 데이터베이스에 새 비밀번호 업데이트
         const { data, error } = await supabase
@@ -165,4 +165,3 @@ app.post("/set-new-password", async (req, res) => {
 app.listen(port, () => {
     console.log(`✅ 서버가 실행 중: http://localhost:${port}`);
 });
-
