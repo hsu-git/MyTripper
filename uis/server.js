@@ -10,7 +10,7 @@ const app = express();
 const port = 3000; // 서버가 실행될 포트 번호
 
 // Supabase 클라이언트 설정
-require("dotenv").config(); //환경변수 로드드
+require("dotenv").config(); //환경변수 로드
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 // ⚠️ 실제 서비스에서는 API 키를 .env 파일에 저장하세요!
