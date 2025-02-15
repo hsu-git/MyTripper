@@ -9,13 +9,13 @@ let GROQ_API_KEY_JH;
 let GEMINI_API_KEY_JH;
 let UNSPLASH_API_KEY_JH;
 
-// API 기본 URL (기존과 동일)
+// API 기본 URL
 const TOGETHER_BASE_URL = "https://api.together.xyz";
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GEMINI_BASE_URL =
   "https://generativelanguage.googleapis.com/v1beta/models";
 
-// 모델 이름 (기존과 동일)
+// 모델 이름
 const TURBO_MODEL = "meta-llama/Llama-3.3-70B-Instruct-Turbo-Free";
 const GROQ_LLAMA_MODEL = "llama3-70b-8192";
 const FLUX_MODEL = "black-forest-labs/FLUX.1-schnell-Free";
@@ -23,7 +23,7 @@ const MIXTRAL_MODEL = "mixtral-8x7b-32768";
 const DEEPSEEK_MODEL = "deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free";
 const GEMINI_MODEL_NAME = "gemini-pro"; // Gemini 모델 이름
 
-// Gemini API 호출 함수 (최소 파라미터) (기존과 동일)
+// Gemini API 호출 함수 (최소 파라미터)
 const callGemini = async (prompt) => {
   const url = `${GEMINI_BASE_URL}/${GEMINI_MODEL_NAME}:generateContent`;
   const response = await fetch(url, {
@@ -71,7 +71,7 @@ async function callAI({ url, model, text, apiKey }) {
   }
 }
 
-// 배열 셔플 함수 (Fisher-Yates 알고리즘) (기존과 동일)
+// 배열 셔플 함수 (Fisher-Yates 알고리즘)
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -80,26 +80,7 @@ function shuffleArray(array) {
   return array;
 }
 
-// 이미지 검색 함수 (Unsplash API 호출) (기존과 동일)
-// async function searchImages(query) {
-//   const apiUrl = `https://api.unsplash.com/search/photos?query=${query}&client_id=${UNSPLASH_API_KEY_JH}`; // ✅ UNSPLASH_API_KEY 변수 사용 (이제 .env 에서 불러옴)
-//   try {
-//     const response = await fetch(apiUrl);
-//     if (!response.ok) {
-//       throw new Error(
-//         `Unsplash API 요청 실패: ${response.status} ${response.statusText}`
-//       );
-//     }
-//     const data = await response.json();
-//     const imageUrls = data.results.map((result) => result.urls.regular);
-//     return imageUrls;
-//   } catch (error) {
-//     console.error("Unsplash API 요청 중 오류 발생:", error);
-//     return ["이미지 없음"];
-//   }
-// }
-
-// ✅ 정규 표현식 기반 분할 함수 (기존과 동일)
+// ✅ 정규 표현식 기반 분할 함수
 function splitLocations(locationText) {
   if (!locationText) {
     return []; // 빈 문자열 또는 nullish 값인 경우 빈 배열 반환
@@ -111,27 +92,27 @@ function splitLocations(locationText) {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-  // ✅ URL 파라미터에서 mbtiResult 값을 가져옵니다. (기존과 동일)
+  // ✅ URL 파라미터에서 mbtiResult 값을 가져옵니다.
   const urlParams = new URLSearchParams(window.location.search);
   const mbtiResult = urlParams.get("mbti"); // mbtiResult 값이 없는 경우 (URL 파라미터 오류 또는 직접 접근)
 
   if (!mbtiResult) {
     alert("MBTI 유형이 URL 파라미터로 전달되지 않았습니다."); // 또는 다른 오류 처리
     return; // MBTI 결과 생성 중단
-  } // console.log("전달받은 MBTI 값:", mbtiResult); (기존과 동일)
+  } // console.log("전달받은 MBTI 값:", mbtiResult);
 
-  const mbtiResultElement = document.createElement("p"); // (기존과 동일)
-  mbtiResultElement.textContent = `전달받은 MBTI 값: ${mbtiResult}`; // (기존과 동일)
-  document.body.appendChild(mbtiResultElement); // (기존과 동일)
+  const mbtiResultElement = document.createElement("p");
+  mbtiResultElement.textContent = `전달받은 MBTI 값: ${mbtiResult}`;
+  document.body.appendChild(mbtiResultElement);
 
-  const resultImageElement = document.getElementById("resultImage"); // (기존과 동일)
-  const mbtiDescriptionElement = document.getElementById("mbtiDescription"); // (기존과 동일)
+  const resultImageElement = document.getElementById("resultImage");
+  const mbtiDescriptionElement = document.getElementById("mbtiDescription");
 
-  const cardElements = document.querySelectorAll(".result-item"); // (기존과 동일)
-  const cardImageElements = document.querySelectorAll(".card-image"); // (기존과 동일)
-  const cardContentElements = document.querySelectorAll(".card-text"); // (기존과 동일) // ✅ 9개 버튼 요소 선택 (각 카드별로 3개씩) (기존과 동일)
+  const cardElements = document.querySelectorAll(".result-item");
+  const cardImageElements = document.querySelectorAll(".card-image");
+  const cardContentElements = document.querySelectorAll(".card-text"); // ✅ 9개 버튼 요소 선택 (각 카드별로 3개씩)
 
-  const locationButtonElements = document.querySelectorAll(".item-button"); // (기존과 동일)
+  const locationButtonElements = document.querySelectorAll(".item-button");
 
   try {
     // ✅ 서버 API 엔드포인트 호출하여 API 키 가져오기
@@ -162,7 +143,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       UNSPLASH_API_KEY: UNSPLASH_API_KEY_JH,
     });
 
-    const text = mbtiResult; // ✅ URL 파라미터에서 받은 MBTI 값을 text 변수에 할당 (기존과 동일) // 이미지, MBTI 설명, 추천 음식/액티비티 생성 (기존 코드와 동일)
+    const text = mbtiResult; // ✅ URL 파라미터에서 받은 MBTI 값을 text 변수에 할당
+    // 이미지, MBTI 설명, 추천 음식/액티비티 생성
 
     const imagePrompt = await callAI({
       url: GROQ_URL,
@@ -275,22 +257,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       text: activityPromptJSON2,
     }).then((res) => [res.data[0].url]); // 배열 형태로 반환 (기존 코드와 통일)
 
-    //UNSPLASH제거-------------------------------------------
-    // const foodImageURLs = await searchImages(
-    //   `${foodRecommendationPrompt.trim()}` // ✅ searchImages 는 이미 UNSPLASH_API_KEY 사용
-    // );
-    // const activityImageURLs1 = await searchImages(
-    //   `${activityRecommendationPrompt1.trim()}` // ✅ searchImages 는 이미 UNSPLASH_API_KEY 사용
-    // );
-    // const activityImageURLs2 = await searchImages(
-    //   `${activityRecommendationPrompt2.trim()}` // ✅ searchImages 는 이미 UNSPLASH_API_KEY 사용
-    // );
-    //--------------------------------------------------------
-    resultImageElement.src = image; // (기존과 동일)
-    mbtiDescriptionElement.textContent = mbtiDescriptionPrompt.trim(); // (기존과 동일)
+    resultImageElement.src = image;
+    mbtiDescriptionElement.textContent = mbtiDescriptionPrompt.trim();
 
     const resultItems = [
-      // (기존과 동일)
       { text: foodRecommendationPrompt.trim(), image: foodImageURLs[0] },
       {
         text: activityRecommendationPrompt1.trim(),
@@ -301,64 +271,76 @@ document.addEventListener("DOMContentLoaded", async function () {
         image: activityImageURLs2[0],
       },
     ];
-    const shuffledItems = shuffleArray([...resultItems]); // (기존과 동일)
+    const shuffledItems = shuffleArray([...resultItems]);
 
     for (let i = 0; i < cardElements.length; i++) {
-      // (기존과 동일)
-      cardImageElements[i].src = shuffledItems[i].image || "이미지 없음"; // (기존과 동일)
-      cardContentElements[i].textContent = shuffledItems[i].text; // (기존과 동일)
-    } // ✅ 각 추천 아이템별로 3개의 지역 추천 생성 (총 3번 API 호출) (기존과 동일)
+      cardImageElements[i].src = shuffledItems[i].image || "이미지 없음";
+      cardContentElements[i].textContent = shuffledItems[i].text;
+    } // ✅ 각 추천 아이템별로 3개의 지역 추천 생성 (총 3번 API 호출)
 
-    const locationRecommendations = []; // 추천 지역 저장 배열 (기존과 동일)
+    const locationRecommendations = []; // 추천 지역 저장 배열
 
     for (let i = 0; i < shuffledItems.length; i++) {
-      // (기존과 동일)
-      // shuffledItems 순회 (3번) (기존과 동일)
-      const itemText = shuffledItems[i].text; // (기존과 동일)
+      // shuffledItems 순회 (3번)
+      const itemText = shuffledItems[i].text;
 
       try {
-        // (기존과 동일)
-        // ✅ Gemini API 에 3개의 지역 추천 요청 (한 번의 API 호출로 3개 추천 받기) (기존과 동일)
+        // ✅ Gemini API 에 3개의 지역 추천 요청 (한 번의 API 호출로 3개 추천 받기)
         const locationPrompt = await callGemini(
           // ✅ callGemini 는 이미 GEMINI_API_KEY 사용
           `**[한국어 여행 지역 추천 3곳]**\n\n${text} MBTI 유형에게 ${itemText}을(를) 즐기기 좋은 한국 여행 지역 3곳을 추천해줘. 사람들이 많이 찾는 인기 명소 위주로 각 지역은 15자 이내로 추천해줘. 추천 지역은 **평문으로 작성하고 쉼표로 구분**해서 줘`
         );
-        console.log("locationPrompt:", locationPrompt); // (기존과 동일)
-        const locationText = // (기존과 동일)
-          locationPrompt.candidates[0].content.parts[0].text.trim(); // (기존과 동일) // console.log("locationText:", locationText); // // locationText 로그 (기존과 동일) // // locationText 로그 (기존과 동일) // ✅ 쉼표로 구분된 지역 텍스트를 배열로 분할 (기존과 동일)
-        const locations = splitLocations(locationText); // (기존과 동일) // ✅ 정규 표현식 기반 분할 함수 사용 (기존과 동일) // console.log("locations:", locations); // locations 배열 로그 (기존과 동일) // ✅ 분할된 지역들을 locationRecommendations 배열에 추가 (기존과 동일)
-        locationRecommendations.push(...locations); // (기존과 동일)
+        console.log("locationPrompt:", locationPrompt);
+        const locationText =
+          locationPrompt.candidates[0].content.parts[0].text.trim(); // console.log("locationText:", locationText); // // locationText 로그  // // locationText 로그 // ✅ 쉼표로 구분된 지역 텍스트를 배열로 분할
+        const locations = splitLocations(locationText); // ✅ 정규 표현식 기반 분할 함수 사용  // console.log("locations:", locations); // locations 배열 로그  // ✅ 분할된 지역들을 locationRecommendations 배열에 추가
+        locationRecommendations.push(...locations);
       } catch (error) {
-        // (기존과 동일)
-        console.error("Gemini API 호출 오류:", error); // (기존과 동일)
+        console.error("Gemini API 호출 오류:", error);
         locationRecommendations.push(
-          // (기존과 동일)
-          "지역 추천 실패", // (기존과 동일)
-          "지역 추천 실패", // (기존과 동일)
-          "지역 추천 실패" // 3개 버튼 모두 "지역 추천 실패" 표시 (기존과 동일)
-        ); // (기존과 동일)
-      } // (기존과 동일)
+          "지역 추천 실패",
+          "지역 추천 실패",
+          "지역 추천 실패" // 3개 버튼 모두 "지역 추천 실패" 표시
+        );
+      }
     }
 
     console.log(
-      // (기존과 동일)
-      "locationRecommendations.length:", // (기존과 동일)
-      locationRecommendations.length // (기존과 동일)
-    ); // 배열 길이 로그 (기존과 동일) // ✅ 버튼 텍스트 업데이트 (각 카드별로 3개씩) (기존과 동일)
+      "locationRecommendations.length:",
+      locationRecommendations.length
+    ); // 배열 길이 로그
+    // ✅ 버튼 텍스트 업데이트 (각 카드별로 3개씩)
 
     for (let i = 0; i < shuffledItems.length; i++) {
-      // (기존과 동일)
-      // shuffledItems 순회 (3번) (기존과 동일)
+      // shuffledItems 순회 (3번)
       for (let j = 0; j < 3; j++) {
-        // (기존과 동일)
-        // 각 카드별 3개의 버튼 순회 (기존과 동일)
-        const buttonIndex = i * 3 + j; // 버튼 인덱스 계산 (0, 1, 2, 3, 4, 5, 6, 7, 8) (기존과 동일)
-        const recommendationIndex = i * 3 + j; // 지역 추천 결과 인덱스 계산 (0, 1, 2, 3, 4, 5, 6, 7, 8) (기존과 동일)
+        // 각 카드별 3개의 버튼 순회
+        const buttonIndex = i * 3 + j; // 버튼 인덱스 계산 (0, 1, 2, 3, 4, 5, 6, 7, 8)
+        const recommendationIndex = i * 3 + j; // 지역 추천 결과 인덱스 계산 (0, 1, 2, 3, 4, 5, 6, 7, 8)
 
-        locationButtonElements[buttonIndex].textContent = // (기존과 동일)
-          locationRecommendations[recommendationIndex] || "지역 추천 실패"; // locationRecommendations 에서 텍스트 추출 (기존과 동일)
-      } // (기존과 동일)
-    } // (기존과 동일)
+        locationButtonElements[buttonIndex].textContent =
+          locationRecommendations[recommendationIndex] || "지역 추천 실패"; // locationRecommendations 에서 텍스트 추출
+      }
+    }
+    locationButtonElements.forEach((button, index) => {
+      button.addEventListener("click", function () {
+        // ✅ 클릭된 버튼의 텍스트 내용
+        const locationText = this.textContent;
+        console.log("선택된 지역:", locationText);
+
+        // ✅ 현재 버튼이 속한 카드 요소 찾기
+        const cardIndex = Math.floor(index / 3);
+        const selectedCardContentElement = cardContentElements[cardIndex];
+        const itemText = selectedCardContentElement.textContent;
+        console.log("선택된 아이템:", itemText);
+
+        // ✅ main03-PYB/index.html로 전달할 URL 생성
+        const targetUrl = `../main03-PYB/index.html?mbti=${mbtiResult}&location=${locationText}&item=${itemText}`;
+
+        // ✅ main03-PYB/index.html로 페이지 이동
+        window.location.href = targetUrl;
+      });
+    });
   } catch (error) {
     console.error("오류 발생:", error);
     cardContentElements.forEach((element) => {
