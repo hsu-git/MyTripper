@@ -2,9 +2,8 @@ body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  color: rgb(18, 3, 3) !important;
+  color: rgb(18, 3, 3) !important; /* 텍스트 색상 흰색으로 변경 */
 }
-
 .header-content {
   display: flex;
   flex-direction: column;
@@ -17,8 +16,8 @@ body {
 }
 
 .image-area {
-  width: 40%;
-  margin-left: 20px;
+  width: 40%; /* 이미지 영역 너비 조절 */
+  margin-left: 20px; /* 텍스트 영역과의 간격 */
 }
 
 .image-area img {
@@ -35,12 +34,12 @@ main {
 }
 
 .details-content {
-  display: flex;
-  align-items: flex-start;
+  display: flex; /* 상세 정보 영역을 flexbox로 설정 */
+  align-items: flex-start; /* 지역 및 내용 위쪽 정렬 */
 }
 
 .text-area {
-  width: 60%;
+  width: 60%; /* 텍스트 영역 너비 조절 */
 }
 
 .region,
@@ -73,18 +72,6 @@ main {
   cursor: pointer;
 }
 
-#save-button {
-  padding: 10px 20px;
-  background-color: #1e90ff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin: 10px auto;
-  display: block;
-  width: 150px;
-}
-
 .button-area {
   display: flex;
   justify-content: center;
@@ -103,13 +90,11 @@ main {
 
 .search-area,
 .details {
-  backdrop-filter: blur(2px);
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-#loading {
-  text-align: center;
-  margin-top: 10px;
-  font-style: italic;
-  color: gray;
+  backdrop-filter: blur(2px); /* 블러 효과 적용 */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* 반투명 흰색 배경 추가 (선택 사항) */
 }
