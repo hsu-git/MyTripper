@@ -11,7 +11,22 @@ package-lock.json
 .DS_Store
 Thumbs.db
 .vscode/
+.idea/
 
 #aside
 aside.js
 aside.html
+
+#내 서버
+server.js
+
+# 로그 파일
+*.log
+
+# 빌드 산출물
+dist/
+build/
+coverage/
+
+#
+package.json
