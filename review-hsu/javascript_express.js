@@ -197,8 +197,13 @@ async function fetchBoardData(page = 1, mbtiList = [], searchText = "") {
       params.append("search", searchText);
     }
 
-    const res = await fetch(`/api/reviews?${params.toString()}`);
+    // 🔍 서버 포트를 명시 (3000)
+    const res = await fetch(
+      `http://localhost:3000/api/reviews?${params.toString()}`
+    );
     const json = await res.json();
+    // const res = await fetch(`/api/reviews?${params.toString()}`);
+    // const json = await res.json();
     if (!json.success) throw new Error(json.message);
 
     const { data, totalCount } = json;
