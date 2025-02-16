@@ -44,3 +44,7 @@ a {
   margin: 50px;
   padding: 100px;
 }
+
+#password-reset-form{
+  justify-items: center;
+}

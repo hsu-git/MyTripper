@@ -24,7 +24,7 @@ document
         localStorage.setItem("token", result.data.token);
         localStorage.setItem("user_id", result.data.user_id);
         // 로그인 후 페이지 이동 (예: 메인 페이지)
-        window.location.href = "../_common/index.html";
+        window.location.href = "/main01-PYB/index.html";
       } else {
         alert("로그인 실패: " + result.message); // 오류 메시지 표시
       }

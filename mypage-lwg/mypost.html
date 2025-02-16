@@ -32,33 +32,19 @@
                   <a href="./mypage.html" class="sideBar nav-link link-body-emphasis text-black"> 내 정보 변경 </a>
                 </li>
                 <li class="nav-item">
-                  <a href="./mydocument.html" class="sideBar nav-link link-body-emphasis text-black"> 내 글 보기 </a>
+                  <a href="./mypost.html" class="sideBar nav-link link-body-emphasis text-black"> 내 글 보기 </a>
                 </li>
               </ul>
             </div>
           </aside>
 
           <section class="col-md-9">
-            <div class="bg-white border rounded-3 shadow-sm p-4">
-              <div class="border mb-3 rounded-3 p-2">
-                <a class="nav-link" href="./mydocument.html">
-                  <h5 class="fw-bold">내가 쓴 글 제목 1</h5>
-                  <label for="text" class="border-0">내가 쓴 글 내용 1</label>
-                </a>
-              </div>
-              <div class="border mb-3 rounded-3 p-2">
-                <a class="nav-link" href="./mydocument.html">
-                  <h5 class="fw-bold">내가 쓴 글 제목 2</h5>
-                  <label for="text" class="border-0">내가 쓴 글 내용 2</label>
-                </a>
-              </div>
-              <div class="border mb-3 rounded-3 p-2">
-                <a class="nav-link" href="./mydocument.html">
-                  <h5 class="fw-bold">내가 쓴 글 제목 3</h5>
-                  <label for="text" class="border-0">내가 쓴 글 내용 3</label>
-                </a>
-              </div>
-            </div>
+            <div id="post-container" class="bg-white border rounded-3 shadow-sm p-4" style="min-height: 532px"></div>
+
+            <!-- 페이지네이션 -->
+            <nav class="mt-4 text-center" aria-label="Page navigation example">
+              <ul class="pagination justify-content-center" id="pagination"></ul>
+            </nav>
           </section>
         </div>
       </main>
