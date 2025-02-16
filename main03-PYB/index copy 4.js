@@ -29,7 +29,8 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("AI 결과를 표시하는 데 실패했습니다.");
         displayImage("default_image.jpg");
       });
-  } // 저장하기 버튼 이벤트 리스너 추가
+  }
+  // 저장하기 버튼 이벤트 리스너 추가
   document.getElementById("save-button").addEventListener("click", function () {
     if (
       imageUrlToSave &&
@@ -38,8 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
       subTitleToSave &&
       contentTextToSave
     ) {
-      saveTravelPlanDataToDatabase(
-        // 함수명 변경
+      saveImageUrlToDatabase(
         imageUrlToSave,
         mbtiToSave,
         mainTitleToSave,
@@ -49,7 +49,8 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       alert("저장할 데이터가 없습니다.");
     }
-  }); // 추가로 질문하기 버튼 이벤트 리스너 추가
+  });
+  // 추가로 질문하기 버튼 이벤트 리스너 추가
   document
     .getElementById("search-button")
     .addEventListener("click", async function () {
@@ -72,11 +73,11 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 function generatePrompt(mbti, item, location) {
   return `당신은 ${mbti} 유형의 사람들에게 ${location}에서 ${item}을(를) 즐길 수 있는 최고의 장소와 함께 즐길 거리를 추천하는 전문가입니다. 다음 질문에 대해 상세하고 구체적으로 답변해주세요.
-        질문: ${mbti} 유형의 사람들에게 ${location}에서 ${item}을(를) 즐길 수 있는 구체적인 위치와 함께 즐길만한 것을 추천해주세요.
-        1. 30자 이내 요약
-        2. 추천에 대한 상세 내용 및 위치 (웹사이트, 주소, 운영 시간 등 포함).
-        3. ${location}에서 ${item}을(를) 더욱 특별하게 즐길 수 있는 방법 (경험, 팁, 관련 활동 등). 단, 추천하는 활동은 반드시 실제로 존재하는 것이어야 하며, 구체적인 정보를 제공해야 합니다. 만약 추천하는 활동이 존재하지 않는 경우, 유사한 대안을 제시해주세요.
-        4. 추천 장소의 이미지를 data URL 형식으로 제공해주세요.`;
+        질문: ${mbti} 유형의 사람들에게 ${location}에서 ${item}을(를) 즐길 수 있는 구체적인 위치와 함께 즐길만한 것을 추천해주세요.
+        1. 30자 이내 요약
+        2. 추천에 대한 상세 내용 및 위치 (웹사이트, 주소, 운영 시간 등 포함).
+        3. ${location}에서 ${item}을(를) 더욱 특별하게 즐길 수 있는 방법 (경험, 팁, 관련 활동 등). 단, 추천하는 활동은 반드시 실제로 존재하는 것이어야 하며, 구체적인 정보를 제공해야 합니다. 만약 추천하는 활동이 존재하지 않는 경우, 유사한 대안을 제시해주세요.
+        4. 추천 장소의 이미지를 data URL 형식으로 제공해주세요.`;
 }
 async function fetchApiKeys() {
   try {
@@ -147,10 +148,10 @@ async function uploadImageToSupabase(imageDataUrl, imageName) {
     console.error("이미지 업로드 실패:", error);
     return null;
   }
-  const imageUrl = `${supabaseUrl}/storage/v1/object/public/USERS_IMAGE/${imageName}`; // 이미지 URL 생성 방식 수정 (템플릿 리터럴)
+  const imageUrl = `<span class="math-inline">\{supabaseUrl\}/storage/v1/object/public/USERS\_IMAGE/</span>{imageName}`;
   return imageUrl;
 }
-async function saveTravelPlanDataToDatabase( // 함수명 변경
+async function saveImageUrlToDatabase(
   imageUrl,
   mbti,
   mainTitle,
@@ -158,16 +159,16 @@ async function saveTravelPlanDataToDatabase( // 함수명 변경
   contentText
 ) {
   const { error } = await supabase
-    .from("TravelPlan") // 테이블 이름 명시
+    .from("TravelPlan")
     .update({
       image_url: imageUrl,
       main_title: mainTitle,
       sub_title: subTitle,
       content_text: contentText,
     })
-    .eq("plan_mbti", mbti); // 컬럼 이름 명시
+    .eq("plan_mbti", mbti);
   if (error) {
-    console.error("데이터베이스 저장 실패:", error); // 오류 메시지 수정
+    console.error("이미지 URL 저장 실패:", error);
   }
 }
 function displayImage(imageUrl) {
@@ -181,15 +182,14 @@ function displayImage(imageUrl) {
 }
 async function displayAIResult(result) {
   if (result && result.result) {
-    // AI 결과 텍스트를 줄바꿈 기준으로 분리 (요약 및 상세 정보, 이미지 URL)
-    const parts = result.result.split("\n\n**3. "); // 분리된 parts에서 요약 및 상세 정보, 이미지 URL 추출
-    const [summaryDetails, imageDataUrl] = parts;
+    const parts = result.result.split("\n\n**3. "); // :흰색_확인_표시: 수정: split 기준 변경 (\n3.  -> \n\n**3. )
+    const [summaryDetails, imageDataUrl] = parts; // :흰색_확인_표시: 수정: parts 배열 구조분해 할당으로 변경
     if (summaryDetails) {
-      // 요약 및 상세 정보를 상세 정보 제목 기준으로 분리
-      const [summary, details] = summaryDetails.split("\n\n**2. ");
+      // :흰색_확인_표시: summaryDetails 가 있을 때만 split 시도
+      const [summary, details] = summaryDetails.split("\n\n**2. "); // :흰색_확인_표시: 수정: split 기준 변경 (\n2. -> \n\n**2. )
       if (summary && details) {
-        // 이미지 파일 이름 생성 (현재 시간 기반)
-        const imageName = `${Date.now()}.jpg`; // Data URL 형식의 이미지 데이터를 Supabase Storage에 업로드하고 이미지 URL 반환
+        // :흰색_확인_표시: summary 와 details 가 모두 있을 때만 화면 표시 시도
+        const imageName = `${Date.now()}.jpg`;
         const imageUrl = await uploadImageToSupabase(imageDataUrl, imageName);
         if (imageUrl) {
           const urlParams = new URLSearchParams(window.location.search);
@@ -199,23 +199,23 @@ async function displayAIResult(result) {
           imageUrlToSave = imageUrl;
           mbtiToSave = mbtiResult;
           mainTitleToSave = itemResult;
-          subTitleToSave = summary.replace("**1. 30자 요약**\n\n", ""); // 요약 텍스트 추출 및 제목 제거
+          subTitleToSave = summary.replace("**1. 30자 요약**\n\n", ""); // :흰색_확인_표시: 수정: summary 추출 및 "1. " 제거 방식 변경
           contentTextToSave = details.replace(
             "**2. 추천에 대한 상세 내용 및 위치**\n\n",
             ""
-          ); // 상세 내용 텍스트 추출 및 제목 제거 // 화면에 AI 결과 표시
-          document.querySelector(".mainTitle h1").textContent = itemResult;
-          document.querySelector(".subTitle h2").textContent = subTitleToSave;
+          ); // :흰색_확인_표시: 수정: details 추출 및 "2. " 제거 방식 변경 // 화면에 표시
+          document.querySelector(".mainTitle h1").textContent = itemResult; // :흰색_확인_표시: 수정: .title-area -> .mainTitle
+          document.querySelector(".subTitle h2").textContent = subTitleToSave; // :흰색_확인_표시: 수정: .details -> .subTitle
           document.querySelector(".subTitle .region p").textContent =
-            contentTextToSave;
+            contentTextToSave; // :흰색_확인_표시: 수정: .details -> .subTitle
           displayImage(imageUrl);
         }
       } else {
-        console.error("summary 또는 details 추출 실패");
+        console.error("summary 또는 details 추출 실패"); // :흰색_확인_표시: [추가] summary 또는 details 추출 실패 로그
         displayImage("default_image.jpg");
       }
     } else {
-      console.error("parts 분리 실패");
+      console.error("parts 분리 실패"); // :흰색_확인_표시: [추가] parts 분리 실패 로그
       displayImage("default_image.jpg");
     }
   } else {
@@ -227,8 +227,8 @@ async function displayAIResult(result) {
 async function displaySearchResult(result) {
   const searchResultDiv = document.getElementById("search-result");
   if (result && result.result) {
-    // 검색 결과를 <pre> 태그 내에 форматирование하여 줄바꿈 유지
-    searchResultDiv.innerHTML = `<pre class="search-result-text" style="white-space: pre-wrap;">${result.result}</pre>`; // CSS 클래스 적용
+    // 일반 텍스트 처리 (줄 바꿈 및 공백 유지)
+    searchResultDiv.innerHTML = `<pre style="white-space: pre-wrap;">${result.result}</pre>`;
   } else {
     searchResultDiv.innerHTML = "<p>결과가 없습니다.</p>";
   }
