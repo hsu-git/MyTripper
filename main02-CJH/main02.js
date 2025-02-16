@@ -7,7 +7,6 @@ let TOGETHER_API_KEY_HS;
 let TOGETHER_API_KEY_IS;
 let GROQ_API_KEY_JH;
 let GEMINI_API_KEY_JH;
-let UNSPLASH_API_KEY_JH;
 
 // API 기본 URL
 const TOGETHER_BASE_URL = "https://api.together.xyz";
@@ -111,6 +110,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const locationButtonElements = document.querySelectorAll(".item-button");
 
+  // ✅ 표시/숨김 제어할 요소들을 변수에 저장
+  const imageDescriptionArea = document.querySelector(
+    ".mbti-description-section .image-description-area"
+  );
+  const result2H3 = document.querySelector(".result2 h3"); // ✅ result2H3 정의
+  const resultCards = document.querySelector(".result-cards"); // ✅ resultCards 정의
+
+  loadingContainer.style.display = "flex"; // ✅ 로딩 시작 시 컨테이너 표시
+
   try {
     // ✅ 서버 API 엔드포인트 호출하여 API 키 가져오기
     const keysResponse = await fetch("http://localhost:3000/api/keys"); // ✅ 수정: 절대 경로 이후 수정 필요!!!!!! // const keysResponse = await fetch("/api/keys"); // 서버의 API 엔드포인트 호출 (예: /api/keys)
@@ -127,7 +135,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     TOGETHER_API_KEY_IS = keys.TOGETHER_API_KEY_IS;
     GROQ_API_KEY_JH = keys.GROQ_API_KEY;
     GEMINI_API_KEY_JH = keys.GEMINI_API_KEY;
-    UNSPLASH_API_KEY_JH = keys.UNSPLASH_API_KEY;
 
     console.log("API 키:", {
       TOGETHER_API_KEY_JH: TOGETHER_API_KEY_JH,
@@ -136,7 +143,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       TOGETHER_API_KEY_IS: TOGETHER_API_KEY_IS,
       GROQ_API_KEY: GROQ_API_KEY_JH,
       GEMINI_API_KEY: GEMINI_API_KEY_JH,
-      UNSPLASH_API_KEY: UNSPLASH_API_KEY_JH,
     });
 
     const text = mbtiResult; // ✅ URL 파라미터에서 받은 MBTI 값을 text 변수에 할당 // 이미지, MBTI 설명, 추천 음식/액티비티 생성
@@ -156,7 +162,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const mbtiDescriptionPrompt = await callGemini(
       // ✅ callGemini 는 이미 GEMINI_API_KEY 사용
-      `**[한국어로 MBTI 유형 설명]**\n\n${text} MBTI 유형에 대해 40자 이내로 한국어로 설명해줘`
+      `**[한국어로 MBTI 유형 설명]**\n\n${text} MBTI 유형에 대해 50자 이내로 한국어로 설명해줘`
     ).then((res) => res.candidates[0].content.parts[0].text);
 
     const koreanCelebrityPrompt = await callGemini(
@@ -229,26 +235,30 @@ document.addEventListener("DOMContentLoaded", async function () {
     }).then((res) => [res.data[0].url]); // 배열 형태로 반환 (기존 코드와 통일)
 
     resultImageElement.src = image;
-    mbtiDescriptionElement.textContent = mbtiDescriptionPrompt.trim();
+    mbtiDescriptionElement.innerHTML = `<span>${mbtiDescriptionPrompt.trim()}</span>`; // ✅ innerHTML 로 변경, <span> 태그로 감싸기
 
-    mbtiDescriptionElement.textContent = mbtiDescriptionPrompt.trim();
-
-    // ✅ mbtiDescriptionElement 에 추가 정보 appendChild 로 추가
+    // ✅ mbtiDescriptionElement 에 추가 정보 appendChild 로 추가 (재수정)
     const koreanCelebrityElement = document.createElement("p");
-    koreanCelebrityElement.textContent = `\n\n${mbtiResult}와 유사한 한국 연예인: ${koreanCelebrityPrompt.trim()}`;
+    koreanCelebrityElement.innerHTML = `<strong>${mbtiResult}와 유사한 한국 연예인</strong><br> ${koreanCelebrityPrompt
+      .trim()
+      .replace(/, /g, "<br>")}`; // ✅ <br> 태그 유지, 문자열 템플릿 `` 백틱 사용 명확화
     mbtiDescriptionElement.appendChild(koreanCelebrityElement);
 
     const animeCharacterElement = document.createElement("p");
-    animeCharacterElement.textContent = `\n\n${mbtiResult}와 유사한 캐릭터: ${animeCharacterPrompt.trim()}`;
+    animeCharacterElement.innerHTML = `<strong>${mbtiResult}와 유사한 캐릭터</strong><br> ${animeCharacterPrompt
+      .trim()
+      .replace(/, /g, "<br>")}`; // ✅ <br> 태그 유지, 문자열 템플릿 `` 백틱 사용 명확화
     mbtiDescriptionElement.appendChild(animeCharacterElement);
 
     const mbtiKeywordsElement = document.createElement("p");
-    mbtiKeywordsElement.textContent = `\n\n${mbtiResult} 키워드: ${mbtiKeywordsPrompt.trim()}`;
+    mbtiKeywordsElement.innerHTML = `<strong>${mbtiResult} 키워드</strong><br> ${mbtiKeywordsPrompt
+      .trim()
+      .replace(/, /g, "<br>")}`; // ✅ <br> 태그 유지, 문자열 템플릿 `` 백틱 사용 명확화
     mbtiDescriptionElement.appendChild(mbtiKeywordsElement);
 
-    // ✅ "결과 3개를 나열해드릴게요" 텍스트 추가
+    // ✅ "결과 3개를 나열해드릴게요" 텍스트 추가 (기존 코드 유지)
     const 안내Element = document.createElement("p");
-    안내Element.textContent = `\n\n이제 결과 3개를 나열해드릴게요!`;
+    안내Element.textContent = `\n이제 AI 가 추천한 결과를 확인해 볼까요?`;
     mbtiDescriptionElement.appendChild(안내Element);
 
     const resultItems = [
@@ -336,5 +346,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       element.textContent = "지역 추천 실패";
     });
     resultImageElement.src = "이미지 없음"; // 메인 이미지 오류 시 "이미지 없음" 표시
+  } finally {
+    loadingContainer.style.display = "none"; // ✅ 로딩 완료 (성공/실패) 후 컨테이너 숨김
+
+    // ✅ 로딩 완료 후 이미지-설명 영역, h3, result-cards  보이기
+    if (imageDescriptionArea) {
+      // ✅ imageDescriptionArea null 체크 추가 (안전하게 스타일 변경)
+      imageDescriptionArea.style.display = "flex";
+    }
+    result2H3.style.display = "block"; // ✅ result2H3 (제목 요소) 로 수정 (정상)
+    resultCards.style.display = "grid";
   }
 });
