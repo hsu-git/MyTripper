@@ -147,12 +147,12 @@ function makePosts(postDatas) {
       (post) => `
             <a href="../review2-KHJ/index.html?id=${post.user_id}&serial_number=${post.serial_number}" style="text-decoration: none; color: inherit; display: block;">
                 <div class="d-flex">
-                    <div style="width:80px; height:80px; overflow:hidden; background:#f0f0f0;">
-                        <img src="${post.image_url}" alt="이미지" style="width:100%; height:100%; object-fit:cover;" />
-                    </div>
-                    <div class="ms-3">
-                        <h5>${post.main_title}</h5>
-                        <p style="margin-bottom:5px;">${post.content_text}</p>
+                    <span style="min-width:80px; height:80px; background:#f0f0f0;">
+                        <img src="${post.image_url}" alt="이미지" style="width:80px; height:100%; object-fit:cover;" />
+                    </span>
+                    <div class="ms-3 post_word">
+                        <h5 class="post_word">${post.main_title}</h5>
+                        <p class="post_word" style="margin-bottom:5px;">${post.content_text}</p>
                         <p style="font-size: small; color:#999;">
                             MBTI: ${post.plan_mbti} / 작성일: ${post.post_day}
                         </p>
