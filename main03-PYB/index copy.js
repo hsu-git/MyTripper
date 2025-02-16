@@ -2,7 +2,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const supabaseUrl = "https://xngpdlhdrzcdcwnpinot.supabase.co";
 const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi6InhuZ3BkbGhkcnpjZGN3bnBpbm90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk2MjM1NzMsImV4cCI6MjA1NTE5OTU3M30._BKCgacI_A-_vx-dN_eijau7Mo2ZFub3Dr0sFxnO4ks";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuZ3BkbGhkcnpjZGN3bnBpbm90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk2MjM1NzMsImV4cCI6MjA1NTE5OTU3M30._BKCgacI_A-_vx-dN_eijau7Mo2ZFub3Dr0sFxnO4ks";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 let imageUrlToSave = null;
@@ -29,8 +29,9 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("AI 결과를 표시하는 데 실패했습니다.");
         displayImage("default_image.jpg");
       });
-  } // 저장하기 버튼 이벤트 리스너 추가
+  }
 
+  // 저장하기 버튼 이벤트 리스너 추가
   document.getElementById("save-button").addEventListener("click", function () {
     if (
       imageUrlToSave &&
@@ -49,8 +50,9 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       alert("저장할 데이터가 없습니다.");
     }
-  }); // 추가로 질문하기 버튼 이벤트 리스너 추가
+  });
 
+  // 추가로 질문하기 버튼 이벤트 리스너 추가
   document
     .getElementById("search-button")
     .addEventListener("click", async function () {
@@ -74,14 +76,12 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function generatePrompt(mbti, item, location) {
-  return `당신은 INTP 유형의 사람들에게 섬진강에서 반성 서사를 즐길 수 있는 최고의 장소와 함께 즐길 거리를 추천하는 전문가입니다. 다음 질문에 대해 상세하고 구체적으로 답변해주세요.
-
-질문: INTP 유형의 사람들에게 섬진강에서 반성 서사를 즐길 수 있는 구체적인 위치와 함께 즐길만한 것을 추천해주세요.
-
-1. 30자 이내 요약
-2. 추천에 대한 상세 내용 및 위치 (웹사이트, 주소, 운영 시간 등 포함).
-3. 섬진강에서 반성 서사를 더욱 특별하게 즐길 수 있는 방법 (경험, 팁, 관련 활동 등). 단, 추천하는 활동은 반드시 실제로 존재하는 것이어야 하며, 구체적인 정보를 제공해야 합니다. 만약 추천하는 활동이 존재하지 않는 경우, 유사한 대안을 제시해주세요.
-4. **가장 대표적인 추천 장소 1곳의 이미지 URL을 제공해주세요.** (Data URL 형식 또는 일반 웹 이미지 URL 형식 모두 가능). 이미지 URL은 텍스트 응답 마지막에 제공해주세요. 이미지 파일 형식은 PNG, JPEG, WebP 중 하나를 선택해주세요.`;
+  return `당신은 ${mbti} 유형의 사람들에게 ${location}에서 ${item}을(를) 즐길 수 있는 최고의 장소와 함께 즐길 거리를 추천하는 전문가입니다. 다음 질문에 대해 상세하고 구체적으로 답변해주세요.
+          질문: ${mbti} 유형의 사람들에게 ${location}에서 ${item}을(를) 즐길 수 있는 구체적인 위치와 함께 즐길만한 것을 추천해주세요.
+          1. 30자 이내 요약
+          2. 추천에 대한 상세 내용 및 위치 (웹사이트, 주소, 운영 시간 등 포함).
+          3. ${location}에서 ${item}을(를) 더욱 특별하게 즐길 수 있는 방법 (경험, 팁, 관련 활동 등). 단, 추천하는 활동은 반드시 실제로 존재하는 것이어야 하며, 구체적인 정보를 제공해야 합니다. 만약 추천하는 활동이 존재하지 않는 경우, 유사한 대안을 제시해주세요.
+          4. 추천 장소의 이미지를 data URL 형식으로 제공해주세요.`;
 }
 async function fetchApiKeys() {
   try {
@@ -138,36 +138,18 @@ async function callAI(prompt) {
 }
 
 async function uploadImageToSupabase(imageDataUrl, imageName) {
-  console.log(
-    "uploadImageToSupabase: Starting upload for imageName:",
-    imageName
-  ); // ADDED
-  console.log(
-    "uploadImageToSupabase: imageDataUrl (first 50 chars):",
-    imageDataUrl.substring(0, 50) + "..."
-  ); // ADDED - Check URL prefix
-  try {
-    const blob = await fetch(imageDataUrl).then((r) => {
-      console.log("uploadImageToSupabase: fetch response:", r); // ADDED - Inspect fetch response
-      return r.blob();
-    });
-    console.log("uploadImageToSupabase: blob created successfully"); // ADDED
-    const { data, error } = await supabase.storage
-      .from("USERS_IMAGE")
-      .upload(imageName, blob);
+  const blob = await fetch(imageDataUrl).then((r) => r.blob());
+  const { data, error } = await supabase.storage
+    .from("USERS_IMAGE")
+    .upload(imageName, blob);
 
-    if (error) {
-      console.error("이미지 업로드 실패:", error);
-      return null;
-    }
-
-    const imageUrl = `${supabaseUrl}/storage/v1/object/public/USERS_IMAGE/${imageName}`;
-    return imageUrl;
-  } catch (fetchError) {
-    // Catch fetch errors specifically
-    console.error("uploadImageToSupabase: fetch error:", fetchError); // ADDED - Log fetch error object
-    return null; // Return null on fetch failure
+  if (error) {
+    console.error("이미지 업로드 실패:", error);
+    return null;
   }
+
+  const imageUrl = `<span class="math-inline">\{supabaseUrl\}/storage/v1/object/public/USERS\_IMAGE/</span>{imageName}`;
+  return imageUrl;
 }
 
 async function saveImageUrlToDatabase(
@@ -203,78 +185,36 @@ function displayImage(imageUrl) {
 }
 
 async function displayAIResult(result) {
-  console.log("displayAIResult 함수 호출됨");
-  console.log("displayAIResult result 데이터:", result);
   if (result && result.result) {
-    console.log("displayAIResult result.result 데이터:", result.result);
+    const parts = result.result.split("\n3. ");
+    const [summary, details] = parts[0].split("\n2. ");
+    const imageDataUrl = parts[1];
 
-    // 수정: "\n4. 대표 추천 장소 이미지\n\n" 기준으로 분리
-    const parts = result.result.split("\n4. 대표 추천 장소 이미지\n\n");
-    console.log("parts:", parts); // [✅ 추가] parts 값 로그 출력
-
-    const textSections = parts[0]; // sections 1, 2, 3
-    console.log("textSections:", textSections); // [✅ 추가] textSections 값 로그 출력
-
-    // 수정: sections 1, 2, 3 텍스트에서 요약(summary)과 상세 내용(details) 분리
-    const summaryParts = textSections.split("\n\n2. 추천 장소와 활동\n\n");
-    console.log("summaryParts:", summaryParts); // [✅ 추가] summaryParts 값 로그 출력
-
-    const summary = summaryParts[0]
-      .replace(
-        "**1. 요약**\n\n", // Changed replace string to "**1. 요약**\n\n" to match actual title
-        ""
-      )
-      .trim(); // 요약문 추출 및 불필요한 텍스트 제거, trim() 추가
-    console.log("summary:", summary); // [✅ 추가] summary 값 로그 출력
-
-    const detailsParts = summaryParts[1].split(
-      "\n\n3. 반성 서사를 더욱 특별하게 즐기는 방법\n\n"
-    );
-    console.log("detailsParts:", detailsParts); // [✅ 추가] detailsParts 값 로그 출력
-
-    const details =
-      "**2. 추천 장소와 활동**" + // Changed section title to "**2. 추천 장소와 활동**"
-      detailsParts[0].trim() +
-      "\n\n**3. 반성 서사를 더욱 특별하게 즐기는 방법**" + // Changed section title to "**3. 반성 서사를 더욱 특별하게 즐기는 방법**"
-      detailsParts[1].trim(); // 상세 내용 추출 및 섹션 제목 재구성, trim() 추가
-    console.log("details:", details); // [✅ 추가] details 값 로그 출력
-
-    const imageSection = parts[1];
-    console.log("imageSection:", imageSection); // [✅ 추가] imageSection 값 로그 출력
-    const imageUrlMatch = imageSection.match(/\[.*?URL\]\((.*?)\)/); // 수정된 정규 표현식
-
-    let imageUrl = null;
-    if (imageUrlMatch && imageUrlMatch[1]) {
-      imageUrl = imageUrlMatch[1];
-      console.log("imageUrl:", imageUrl); // imageUrl 로그 출력
-    }
-    console.log("imageUrlMatch:", imageUrlMatch); // [✅ 추가] imageUrlMatch 값 로그 출력
-    console.log("최종 imageUrl:", imageUrl); // [✅ 추가] 최종 imageUrl 값 로그 출력
-
-    if (imageUrl) {
+    if (imageDataUrl) {
       const imageName = `${Date.now()}.jpg`;
-      const imageUrlForDisplay = await uploadImageToSupabase(
-        imageUrl,
-        imageName
-      ); // 변수명 변경 (imageUrl -> imageUrlForDisplay)
+      const imageUrl = await uploadImageToSupabase(imageDataUrl, imageName);
 
-      if (imageUrlForDisplay) {
-        // 변수명 변경 (imageUrl -> imageUrlForDisplay)
+      if (imageUrl) {
         const urlParams = new URLSearchParams(window.location.search);
         const mbtiResult = urlParams.get("mbti");
         const itemResult = urlParams.get("item");
-        const locationResult = urlParams.get("location"); // 전역 변수에 저장
+        const locationResult = urlParams.get("location");
 
-        imageUrlToSave = imageUrlForDisplay; // 변수명 변경 (imageUrl -> imageUrlForDisplay)
+        // 전역 변수에 저장
+        imageUrlToSave = imageUrl;
         mbtiToSave = mbtiResult;
         mainTitleToSave = itemResult;
-        subTitleToSave = summary;
-        contentTextToSave = details; // 화면에 표시
+        subTitleToSave = summary.replace("1. ", "");
+        contentTextToSave = details;
 
+        // 화면에 표시
         document.querySelector(".title-area h1").textContent = itemResult;
-        document.querySelector(".details h2").textContent = summary;
+        document.querySelector(".details h2").textContent = summary.replace(
+          "1. ",
+          ""
+        );
         document.querySelector(".details .region p").textContent = details;
-        displayImage(imageUrlForDisplay); // 변수명 변경 (imageUrl -> imageUrlForDisplay)
+        displayImage(imageUrl);
       }
     } else {
       displayImage("default_image.jpg");
