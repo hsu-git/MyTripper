@@ -145,7 +145,7 @@ function makePosts(postDatas) {
   postDiv.innerHTML = postDatas
     .map(
       (post) => `
-            <a href="../review2-KHJ/index.html?id=${post.user_id}&serial_number=${post.serial_number}" style="text-decoration: none; color: inherit; display: block;">
+            <a href="../review2-KHJ/index.html?id=${post.serial_number}" style="text-decoration: none; color: inherit; display: block;">
                 <div class="d-flex">
                     <span style="min-width:80px; height:80px; background:#f0f0f0;">
                         <img src="${post.image_url}" alt="이미지" style="width:80px; height:100%; object-fit:cover;" />
