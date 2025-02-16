@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     TOGETHER_API_KEY_HS = keys.TOGETHER_API_KEY_HS;
     TOGETHER_API_KEY_IS = keys.TOGETHER_API_KEY_IS;
     GROQ_API_KEY_JH = keys.GROQ_API_KEY;
-    GEMINI_API_KEY_JH = keys.GEMINI_API_KEY;
+    GEMINI_API_KEY_JH = keys.GEMINI_API_KEY_JH;
 
     console.log("API 키:", {
       TOGETHER_API_KEY_JH: TOGETHER_API_KEY_JH,
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       TOGETHER_API_KEY_HS: TOGETHER_API_KEY_HS,
       TOGETHER_API_KEY_IS: TOGETHER_API_KEY_IS,
       GROQ_API_KEY: GROQ_API_KEY_JH,
-      GEMINI_API_KEY: GEMINI_API_KEY_JH,
+      GEMINI_API_KEY_JH: GEMINI_API_KEY_JH,
     });
 
     const text = mbtiResult; // ✅ URL 파라미터에서 받은 MBTI 값을 text 변수에 할당 // 이미지, MBTI 설명, 추천 음식/액티비티 생성

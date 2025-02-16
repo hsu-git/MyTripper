@@ -10,6 +10,11 @@ let mbtiToSave = null;
 let mainTitleToSave = null;
 let subTitleToSave = null;
 let contentTextToSave = null;
+let GEMINI_API_KEY_YB; // API 키 변수 선언 (fetchApiKeys() 에서 값 할당)
+
+const GEMINI_BASE_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models";
+const GEMINI_MODEL_NAME = "gemini-1.5-flash";
 
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
@@ -20,7 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
   if (mbtiResult && itemResult && locationResult) {
     const prompt = generatePrompt(mbtiResult, itemResult, locationResult);
 
-    callAI(prompt)
+    fetchApiKeys() // ✅ fetchApiKeys() 함수 호출하여 API 키 먼저 가져오기
+      .then(() => callAI(prompt)) // API 키 가져오기 성공 후 callAI() 호출
       .then((result) => {
         displayAIResult(result);
       })
@@ -83,19 +89,22 @@ function generatePrompt(mbti, item, location) {
         3. ${location}에서 ${item}을(를) 더욱 특별하게 즐길 수 있는 방법 (경험, 팁, 관련 활동 등). 단, 추천하는 활동은 반드시 실제로 존재하는 것이어야 하며, 구체적인 정보를 제공해야 합니다. 만약 추천하는 활동이 존재하지 않는 경우, 유사한 대안을 제시해주세요.
         4. 추천 장소의 이미지를 data URL 형식으로 제공해주세요.`;
 }
+
 async function fetchApiKeys() {
   try {
-    const response = await fetch("http://localhost:3000/api/keys"); // 서버의 API 엔드포인트 호출 (예: /api/keys)
+    const response = await fetch("http://localhost:3000/api/keys"); // 서버의 API 엔드포인트 호출
     if (!response.ok) {
       throw new Error(
         `API 키 요청 실패: ${response.status} ${response.statusText}`
       );
     }
     const keys = await response.json();
-    if (!keys.GEMINI_API_KEY) {
+    GEMINI_API_KEY_YB = keys.GEMINI_API_KEY_YB; // ✅ GEMINI_API_KEY_JH 에 API 키 할당
+    console.log("API 키:", { GEMINI_API_KEY_YB: GEMINI_API_KEY_YB }); // API 키 로깅 (디버깅 용)
+    if (!GEMINI_API_KEY_YB) {
       throw new Error("GEMINI_API_KEY가 응답에 없습니다.");
     }
-    return keys.GEMINI_API_KEY;
+    return GEMINI_API_KEY_YB;
   } catch (error) {
     console.error("API 키 가져오기 오류:", error);
     alert("API 키를 가져오는 중 오류가 발생했습니다.");
@@ -105,17 +114,21 @@ async function fetchApiKeys() {
 
 async function callAI(prompt) {
   try {
-    const apiKey = await fetchApiKeys();
-    if (!apiKey) return null; // API 키가 없으면 null 반환
+    const apiKey = GEMINI_API_KEY_YB; // ✅ 전역 변수 GEMINI_API_KEY_JH 사용 (fetchApiKeys()에서 가져옴)
+    if (!apiKey) {
+      throw new Error("API 키가 없습니다.");
+    }
 
-    const url = `/call-gemini?prompt=${encodeURIComponent(
-      prompt
-    )}&apiKey=${encodeURIComponent(apiKey)}`;
+    const url = `${GEMINI_BASE_URL}/${GEMINI_MODEL_NAME}:generateContent`; // ✅ Gemini API URL 직접 구성 (/call-gemini 엔드포인트 제거)
     const response = await fetch(url, {
-      method: "GET",
+      method: "POST", // ✅ POST 요청 유지
       headers: {
         "Content-Type": "application/json",
+        "x-goog-api-key": apiKey, // ✅ API 키를 x-goog-api-key 헤더에 포함 (!!!)
       },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
     });
 
     if (!response.ok) {
@@ -125,10 +138,16 @@ async function callAI(prompt) {
     }
 
     const data = await response.json();
-    if (!data || !data.result) {
+    if (
+      !data ||
+      !data.candidates ||
+      !data.candidates[0].content.parts[0].text
+    ) {
+      // ✅ 응답 구조 변경에 따른 결과 추출 방식 수정
       throw new Error("Gemini API 응답 오류: 결과 형식이 올바르지 않습니다.");
     }
-    return data;
+    const resultText = data.candidates[0].content.parts[0].text; // ✅ 텍스트 결과 추출
+    return { result: resultText }; // ✅ 결과 객체 래핑 ({ result: ... })
   } catch (error) {
     console.error("Gemini API 호출 오류:", error);
     alert("AI와 연결이 끊어졌습니다.");
@@ -185,37 +204,45 @@ function displayImage(imageUrl) {
 
 async function displayAIResult(result) {
   if (result && result.result) {
-    const parts = result.result.split("\n3. ");
-    const [summary, details] = parts[0].split("\n2. ");
-    const imageDataUrl = parts[1];
+    const parts = result.result.split("\n\n**3. "); // ✅ 수정: split 기준 변경 (\n3.  -> \n\n**3. )
+    const [summaryDetails, imageDataUrl] = parts; // ✅ 수정: parts 배열 구조분해 할당으로 변경
 
-    if (imageDataUrl) {
-      const imageName = `${Date.now()}.jpg`;
-      const imageUrl = await uploadImageToSupabase(imageDataUrl, imageName);
+    if (summaryDetails) {
+      // ✅ summaryDetails 가 있을 때만 split 시도
+      const [summary, details] = summaryDetails.split("\n\n**2. "); // ✅ 수정: split 기준 변경 (\n2. -> \n\n**2. )
 
-      if (imageUrl) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const mbtiResult = urlParams.get("mbti");
-        const itemResult = urlParams.get("item");
-        const locationResult = urlParams.get("location");
+      if (summary && details) {
+        // ✅ summary 와 details 가 모두 있을 때만 화면 표시 시도
+        const imageName = `${Date.now()}.jpg`;
+        const imageUrl = await uploadImageToSupabase(imageDataUrl, imageName);
 
-        // 전역 변수에 저장
-        imageUrlToSave = imageUrl;
-        mbtiToSave = mbtiResult;
-        mainTitleToSave = itemResult;
-        subTitleToSave = summary.replace("1. ", "");
-        contentTextToSave = details;
+        if (imageUrl) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const mbtiResult = urlParams.get("mbti");
+          const itemResult = urlParams.get("item");
+          const locationResult = urlParams.get("location"); // 전역 변수에 저장
 
-        // 화면에 표시
-        document.querySelector(".title-area h1").textContent = itemResult;
-        document.querySelector(".details h2").textContent = summary.replace(
-          "1. ",
-          ""
-        );
-        document.querySelector(".details .region p").textContent = details;
-        displayImage(imageUrl);
+          imageUrlToSave = imageUrl;
+          mbtiToSave = mbtiResult;
+          mainTitleToSave = itemResult;
+          subTitleToSave = summary.replace("**1. 30자 요약**\n\n", ""); // ✅ 수정: summary 추출 및 "1. " 제거 방식 변경
+          contentTextToSave = details.replace(
+            "**2. 추천에 대한 상세 내용 및 위치**\n\n",
+            ""
+          ); // ✅ 수정: details 추출 및 "2. " 제거 방식 변경 // 화면에 표시
+
+          document.querySelector(".mainTitle h1").textContent = itemResult; // ✅ 수정: .title-area -> .mainTitle
+          document.querySelector(".subTitle h2").textContent = subTitleToSave; // ✅ 수정: .details -> .subTitle
+          document.querySelector(".subTitle .region p").textContent =
+            contentTextToSave; // ✅ 수정: .details -> .subTitle
+          displayImage(imageUrl);
+        }
+      } else {
+        console.error("summary 또는 details 추출 실패"); // ✅ [추가] summary 또는 details 추출 실패 로그
+        displayImage("default_image.jpg");
       }
     } else {
+      console.error("parts 분리 실패"); // ✅ [추가] parts 분리 실패 로그
       displayImage("default_image.jpg");
     }
   } else {
