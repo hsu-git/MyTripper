@@ -1,14 +1,17 @@
-/*
+/**
  * 전역 변수 / 상태
  */
-const LIMIT = 5; // 한 페이지에 5개
+const LIMIT = 5;
 let currentPage = 1;
 let totalPages = 1;
 
-// 여러 MBTI를 누적할 배열
-let selectedMbti = []; // e.g. ["ENFP","INFJ"]
+// (A) 여러 MBTI 검색을 누적할 배열
+let selectedMbti = [];
 
-/*
+// (B) 텍스트 검색어 (하나만)
+let currentTextSearch = "";
+
+/**
  * (1) 페이지 로드 후 이벤트 설정
  */
 window.addEventListener("DOMContentLoaded", () => {
@@ -20,10 +23,7 @@ window.addEventListener("DOMContentLoaded", () => {
       if (isNaN(pageNum)) return;
       if (pageNum < 1 || pageNum > totalPages) return;
 
-      // 현재 텍스트 검색어
-      const textVal = document.getElementById("textSearchInput").value;
-      // 다시 검색
-      fetchBoardData(pageNum, selectedMbti, textVal);
+      fetchBoardData(pageNum, selectedMbti, currentTextSearch);
     }
   });
 
@@ -38,64 +38,98 @@ window.addEventListener("DOMContentLoaded", () => {
     if (!selectedMbti.includes(val)) {
       selectedMbti.push(val);
     }
-    // 드롭다운 리셋
     mbtiSelect.value = "MBTI별 게시글";
-    // 배지 렌더링
-    renderMbtiBadges();
 
-    // 텍스트 검색어와 함께 검색
-    const textVal = document.getElementById("textSearchInput").value;
-    fetchBoardData(1, selectedMbti, textVal);
+    renderSearchBadges();
+    updateSearchResetButtonVisibility();
+
+    fetchBoardData(1, selectedMbti, currentTextSearch);
   });
 
-  // (C) 배지에서 X 버튼 클릭 -> MBTI 제거
-  const mbtiBadges = document.getElementById("mbtiBadges");
-  mbtiBadges.addEventListener("click", (e) => {
-    if (e.target.matches(".mbti-remove")) {
-      const mbtiVal = e.target.dataset.mbti;
-      selectedMbti = selectedMbti.filter((x) => x !== mbtiVal);
-      renderMbtiBadges();
+  // (C) 검색 초기화 버튼
+  const btnSearchReset = document.getElementById("btnSearchReset");
+  btnSearchReset.addEventListener("click", () => {
+    // 모든 검색 조건 리셋
+    selectedMbti = [];
+    currentTextSearch = "";
+    // 검색창도 비우기
+    document.getElementById("textSearchInput").value = "";
 
-      const textVal = document.getElementById("textSearchInput").value;
-      fetchBoardData(1, selectedMbti, textVal);
-    }
+    renderSearchBadges();
+    updateSearchResetButtonVisibility();
+
+    fetchBoardData(1, selectedMbti, currentTextSearch);
   });
 
   // (D) 텍스트 검색
   const textSearchInput = document.getElementById("textSearchInput");
   const btnSearchText = document.getElementById("btnSearchText");
 
-  // 버튼 클릭
   btnSearchText.addEventListener("click", () => {
-    const searchVal = textSearchInput.value;
-    fetchBoardData(1, selectedMbti, searchVal);
-    textSearchInput.value = "";
+    currentTextSearch = textSearchInput.value.trim();
+    textSearchInput.value = ""; // 검색 후 입력창 비움
+
+    renderSearchBadges();
+    updateSearchResetButtonVisibility();
+
+    fetchBoardData(1, selectedMbti, currentTextSearch);
   });
 
   // 엔터 키
   textSearchInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      const searchVal = textSearchInput.value;
-      fetchBoardData(1, selectedMbti, searchVal);
+      currentTextSearch = textSearchInput.value.trim();
       textSearchInput.value = "";
+
+      renderSearchBadges();
+      updateSearchResetButtonVisibility();
+
+      fetchBoardData(1, selectedMbti, currentTextSearch);
     }
   });
 
-  // (E) 페이지 처음 로드
-  fetchBoardData(1, selectedMbti, "");
+  // (E) 검색 배지 클릭 이벤트 (MBTI / 텍스트 제거)
+  const searchBadges = document.getElementById("searchBadges");
+  searchBadges.addEventListener("click", (e) => {
+    // MBTI 배지의 X 버튼
+    if (e.target.matches(".mbti-remove")) {
+      const mbtiVal = e.target.dataset.mbti;
+      selectedMbti = selectedMbti.filter((x) => x !== mbtiVal);
+
+      renderSearchBadges();
+      updateSearchResetButtonVisibility();
+      fetchBoardData(1, selectedMbti, currentTextSearch);
+    }
+
+    // 텍스트 검색 배지의 X 버튼
+    if (e.target.matches(".text-search-remove")) {
+      currentTextSearch = "";
+
+      renderSearchBadges();
+      updateSearchResetButtonVisibility();
+      fetchBoardData(1, selectedMbti, currentTextSearch);
+    }
+  });
+
+  // (F) 페이지 처음 로드
+  fetchBoardData(1, selectedMbti, currentTextSearch);
 });
 
-// 커스텀 색상 사용
-function renderMbtiBadges() {
-  const mbtiBadges = document.getElementById("mbtiBadges");
-  mbtiBadges.innerHTML = "";
+/**
+ * (2) 검색 배지 렌더링 (MBTI + 텍스트)
+ */
+function renderSearchBadges() {
+  const searchBadges = document.getElementById("searchBadges");
+  searchBadges.innerHTML = "";
 
+  // (A) MBTI 배지들
   selectedMbti.forEach((mbti) => {
     const badge = document.createElement("span");
     badge.classList.add("badge", "me-1");
-    badge.style.backgroundColor = "darkgray"; // 예: 핑크
-    badge.style.color = "white";
+    // badge.style.backgroundColor = "darkgray";
+    badge.style.backgroundColor = "#934A5F";
+    badge.style.color = "#E5E5E5";
     badge.style.marginBottom = "5px";
 
     badge.innerHTML = `
@@ -109,19 +143,53 @@ function renderMbtiBadges() {
         x
       </button>
     `;
-    mbtiBadges.appendChild(badge);
+    searchBadges.appendChild(badge);
   });
+
+  // (B) 텍스트 검색 배지 (하나만)
+  if (currentTextSearch) {
+    const textBadge = document.createElement("span");
+    textBadge.classList.add("badge", "me-1");
+    // textBadge.style.backgroundColor = "lightblue"; // 색 구분
+    textBadge.style.backgroundColor = "#C2B4D6"; // 색 구분
+    textBadge.style.color = "#57648C";
+    textBadge.style.marginBottom = "5px";
+
+    textBadge.innerHTML = `
+      ${currentTextSearch}
+      <button
+        type="button"
+        class="text-search-remove"
+        style="border:none;background:none;color:white;margin-left:5px;"
+      >
+        x
+      </button>
+    `;
+    searchBadges.appendChild(textBadge);
+  }
 }
 
-/*
- * (3) 서버에 게시글 요청
+/**
+ * (3) 검색 초기화 버튼 표시/숨김
+ */
+function updateSearchResetButtonVisibility() {
+  const btnSearchReset = document.getElementById("btnSearchReset");
+  // MBTI나 텍스트 검색 중 하나라도 있으면 보이기
+  if (selectedMbti.length > 0 || currentTextSearch !== "") {
+    btnSearchReset.style.display = "inline-block";
+  } else {
+    btnSearchReset.style.display = "none";
+  }
+}
+
+/**
+ * (4) 서버에 게시글 요청
  */
 async function fetchBoardData(page = 1, mbtiList = [], searchText = "") {
   try {
     const params = new URLSearchParams();
     params.append("page", page);
 
-    // 여러 MBTI를 "ENFP,INFJ" 형태로
     if (mbtiList.length > 0) {
       params.append("mbti", mbtiList.join(","));
     }
@@ -136,22 +204,19 @@ async function fetchBoardData(page = 1, mbtiList = [], searchText = "") {
     const { data, totalCount } = json;
     console.log("데이터:", data, "총 개수:", totalCount);
 
-    // 게시글 렌더
     renderBoardData(data);
 
-    // 페이지 계산
     totalPages = Math.ceil((totalCount || 0) / LIMIT);
     currentPage = page;
-
-    // 페이지네이션 갱신
     setupPagination(currentPage, totalPages);
   } catch (err) {
     console.error("게시글 불러오기 실패:", err);
   }
 }
 
-/*
- * (4) 게시글 목록 렌더링
+/**
+ * (5) 게시글 목록 렌더링
+ *    - travelplan_plus 컬럼: serial_number, sub_title, content_text, review, plan_mbti, post_day, image_url
  */
 function renderBoardData(data) {
   const boardList = document.getElementById("board-list");
@@ -163,40 +228,56 @@ function renderBoardData(data) {
   }
 
   data.forEach((row) => {
+    const serialNumber = row.serial_number;
+    const title = row.sub_title ?? "No Title";
+    const content = row.content_text ?? "";
+    const mbti = row.plan_mbti ?? "-";
+    const review = row.review ?? "";
+    const postDay = row.post_day ?? "";
+    const imgUrl = row.image_url ?? "";
+
+    // 카드 컨테이너
     const cardDiv = document.createElement("div");
     cardDiv.classList.add("card", "mb-3", "p-3");
 
     cardDiv.innerHTML = `
-      <div class="d-flex">
-        <div style="width:80px; height:80px; overflow:hidden; background:#f0f0f0;">
-          <img
-            src="${row.ai_photo ?? ""}"
-            alt="이미지"
-            style="width:100%; height:100%; object-fit:cover;"
-          />
+      <!-- 링크 예시 -->
+      <a
+        href="/review2-KHJ/index.html?id=${serialNumber}"
+        style="text-decoration: none; color: inherit; display: block;"
+      >
+        <div class="d-flex">
+          <div style="width:80px; height:80px; overflow:hidden; background:#f0f0f0;">
+            <img
+              src="${imgUrl}"
+              alt="이미지"
+              style="width:100%; height:100%; object-fit:cover;"
+            />
+          </div>
+          <div class="ms-3">
+            <h5>${title}</h5>
+            <p style="margin-bottom:5px;">${content}</p>
+            ${
+              review
+                ? `<p style="font-size: small; color:#555; margin-bottom:0;">
+                     후기: ${review}
+                   </p>`
+                : ""
+            }
+            <p style="font-size: small; color:#999;">
+              MBTI: ${mbti} / 작성일: ${postDay}
+            </p>
+          </div>
         </div>
-        <div class="ms-3">
-          <h5>${row.board_title ?? "No Title"}</h5>
-          <p style="margin-bottom:5px;">${row.ai_contents ?? ""}</p>
-          ${
-            row.rc_board_revw && row.rc_board_revw.length > 0
-              ? `<p style="font-size: small; color:#555; margin-bottom:0;">
-                  리뷰: ${row.rc_board_revw[0].revw_contents ?? ""}
-                </p>`
-              : ""
-          }
-          <p style="font-size: small; color:#999;">
-            MBTI: ${row.mbti ?? "-"}
-          </p>
-        </div>
-      </div>
+      </a>
     `;
+
     boardList.appendChild(cardDiv);
   });
 }
 
-/*
- * (5) 페이지네이션 (Prev, 1..N, Next)
+/**
+ * (6) 페이지네이션 (Prev, 1..N, Next)
  */
 function setupPagination(current, total) {
   const paginationEl = document.getElementById("pagination");
@@ -210,12 +291,45 @@ function setupPagination(current, total) {
     </li>
   `;
 
-  // 1..N
-  for (let i = 1; i <= total; i++) {
+  const maxVisibleButtons = 5;
+  let startPage = Math.max(current - Math.floor(maxVisibleButtons / 2), 1);
+  let endPage = startPage + maxVisibleButtons - 1;
+
+  if (endPage > total) {
+    endPage = total;
+    startPage = Math.max(endPage - maxVisibleButtons + 1, 1);
+  }
+
+  // 처음 페이지가 생략되었는지
+  if (startPage > 1) {
+    paginationEl.innerHTML += `
+      <li class="page-item">
+        <button class="page-link" data-page="1">1</button>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">...</span>
+      </li>
+    `;
+  }
+
+  // 페이지 번호
+  for (let i = startPage; i <= endPage; i++) {
     const activeClass = i === current ? "active" : "";
     paginationEl.innerHTML += `
       <li class="page-item ${activeClass}">
         <button class="page-link" data-page="${i}">${i}</button>
+      </li>
+    `;
+  }
+
+  // 마지막 페이지가 생략되었는지
+  if (endPage < total) {
+    paginationEl.innerHTML += `
+      <li class="page-item disabled">
+        <span class="page-link">...</span>
+      </li>
+      <li class="page-item">
+        <button class="page-link" data-page="${total}">${total}</button>
       </li>
     `;
   }

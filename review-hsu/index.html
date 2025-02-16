@@ -18,6 +18,7 @@
     <!-- 헤더가 표시될 공간 -->
     <div id="header"></div>
 
+    <hr />
     <div class="container mt-4">
       <!-- (A) 캐러셀 (생략 가능) -->
       <section class="container my-5">
@@ -104,18 +105,17 @@
           </button>
         </div>
       </section>
-
-      <!-- (B) MBTI + 텍스트 검색 -->
+      <!-- (B) 검색/필터 영역 -->
       <main>
         <div class="container my-4">
           <!-- 
-            row + col-auto를 사용해 
-            MBTI 드롭다운(왼쪽)과 검색창(오른쪽)을 분리
+            row + col-auto (MBTI) + col (검색초기화버튼+검색창) 
+            - MBTI 왼쪽 
+            - 검색초기화 + 검색창 오른쪽 정렬
           -->
-          <div class="row align-items-start justify-content-between">
-            <!-- (1) 왼쪽: MBTI 드롭다운 + 배지 -->
+          <div class="row align-items-center">
+            <!-- (1) 왼쪽: MBTI 드롭다운 -->
             <div class="col-auto">
-              <!-- label 문구 제거 -->
               <div class="input-group input-group-sm" style="max-width: 200px">
                 <label class="input-group-text" for="mbtiSelect">MBTI</label>
                 <select class="form-select" id="mbtiSelect">
@@ -138,13 +138,21 @@
                   <option value="ENTJ">ENTJ</option>
                 </select>
               </div>
-              <!-- MBTI 배지 표시 영역 -->
-              <div id="mbtiBadges" style="margin-top: 5px"></div>
             </div>
 
-            <!-- (2) 오른쪽: 텍스트 검색 -->
-            <div class="col-auto">
-              <div class="input-group" style="max-width: 300px">
+            <!-- (2) 오른쪽: 검색 초기화 버튼 + 검색창 -->
+            <div class="col text-end">
+              <!-- 검색 초기화 버튼 (왼쪽) -->
+              <button
+                class="btn btn-outline-secondary btn-sm me-2"
+                id="btnSearchReset"
+                style="display: none"
+              >
+                검색 초기화
+              </button>
+
+              <!-- 검색창 (오른쪽) -->
+              <div class="input-group d-inline-flex" style="max-width: 300px">
                 <input
                   type="text"
                   class="form-control"
@@ -158,9 +166,15 @@
             </div>
           </div>
 
-          <!-- 게시글 목록 표시 영역 -->
+          <!-- (C) 검색 배지 표시 영역 -->
+          <div id="searchBadges" class="mt-2"></div>
+
+          <hr />
+
+          <!-- (D) 게시글 목록 표시 영역 -->
           <div class="mt-4" id="board-list"></div>
 
+          <hr />
           <!-- 페이지네이션 -->
           <nav class="mt-4 text-center" aria-label="Page navigation example">
             <ul class="pagination justify-content-center" id="pagination"></ul>

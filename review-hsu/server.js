@@ -35,49 +35,37 @@ app.get("/api/reviews", async (req, res) => {
     const start = (page - 1) * limit;
     const end = start + limit - 1;
 
-    // 2) 기본 쿼리
+    // 기본 쿼리
+    // 필요한 컬럼: serial_number, sub_title, content_text, review, plan_mbti, post_day, image_url
     let query = supabase
-      .from("user_rc_board")
-      .select("*, rc_board_revw(*)", { count: "exact" })
-      .order("board_id", { ascending: false })
+      .from("travelplan_plus")
+      .select(
+        "serial_number, sub_title, content_text, review, plan_mbti, post_day, image_url",
+        { count: "exact" }
+      )
+      .order("serial_number", { ascending: false })
       .range(start, end);
 
-    // 3) 파라미터
+    // 필터: MBTI
     const { mbti, search } = req.query;
-    console.log("=== Incoming params ===");
-    console.log("page:", page, "mbti:", mbti, "search:", search);
-
-    // (A) 여러 MBTI
-    if (mbti) {
-      // "MBTI별 게시글"은 무시
-      if (mbti !== "MBTI별 게시글") {
-        // 예: "ENFP,INFJ" -> ["ENFP","INFJ"] (공백 제거 + 대문자)
-        let mbtiArr = mbti.split(",").map((x) => x.trim().toUpperCase()); // 대문자로 통일
-
-        console.log("mbtiArr after split:", mbtiArr);
-        // OR 조건
-        query = query.in("mbti", mbtiArr);
-        console.log("Applied .in('mbti', mbtiArr) with array:", mbtiArr);
-      }
+    if (mbti && mbti !== "MBTI별 게시글") {
+      // 예: "ENFP,INFJ" → ["ENFP","INFJ"]
+      const mbtiArr = mbti.split(",").map((x) => x.trim().toUpperCase());
+      query = query.in("plan_mbti", mbtiArr);
     }
 
-    // (B) 검색어
+    // 필터: 검색어 (sub_title, content_text)
     if (search) {
       query = query.or(
-        `board_title.ilike.%${search}%,ai_contents.ilike.%${search}%`
+        `sub_title.ilike.%${search}%,content_text.ilike.%${search}%`
       );
-      console.log("Applied search filter (ilike):", search);
     }
 
-    // 4) 쿼리 실행
+    // 쿼리 실행
     const { data, count, error } = await query;
-    console.log("Query result data:", data);
-    console.log("Query result count:", count);
-    console.log("Query result error:", error);
-
     if (error) throw error;
 
-    // 5) 응답
+    // 응답
     res.json({
       success: true,
       data,
@@ -89,16 +77,16 @@ app.get("/api/reviews", async (req, res) => {
   }
 });
 
-// (B) 기존 정적 서빙 (review-hsu 폴더)
+// 기존 정적 서빙 (review-hsu 폴더)
 app.use(express.static(__dirname));
 
-// (C) 라우트
+// 라우트
 // "/" → index.html
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// (D) 서버 실행
+// 서버 실행
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
