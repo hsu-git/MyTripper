@@ -3,6 +3,10 @@
 /* MBTI 설명 섹션 스타일 */
 .mbti-description-section {
   margin-bottom: 2rem; /* result2 섹션과 간격 조정 */
+  display: flex; /* ✅ flexbox 레이아웃 적용 (세로 방향 배치) */
+  flex-direction: column; /* ✅ 요소들을 세로 방향으로 배치 */
+  align-items: center; /* ✅ 수평 방향 가운데 정렬 */
+  text-align: center; /* ✅ 텍스트 중앙 정렬 */
 }
 
 .mbti-description-section h2 {
@@ -12,9 +16,10 @@
 }
 
 .mbti-description-section .image-description-area {
-  display: flex; /* flexbox 레이아웃 사용 */
+  display: flex; /* ✅ flexbox 레이아웃 사용 (visible) */
+  flex-direction: column; /* ✅ 요소들을 세로 방향으로 배치 */
   align-items: center; /* 세로 방향 가운데 정렬 */
-  gap: 2rem; /* 이미지와 설명 사이 간격 */
+  gap: 1.5rem; /* ✅ 이미지와 설명 사이 간격 줄임 */
   max-width: 800px; /* 섹션 최대 너비 제한 */
   margin: 0 auto; /* 가운데 정렬 */
   padding: 1rem;
@@ -23,24 +28,30 @@
 }
 
 .mbti-description-section img {
-  max-width: 40%; /* 이미지 최대 너비 */
+  max-width: 80%; /* ✅ 이미지 최대 너비 더 키움 (90%) */
   height: auto; /* 높이 자동 조정 */
   border-radius: 0.5rem;
+  max-height: 400px; /* ✅ 이미지 최대 높이 조정 (원하는 높이로 변경) */
+  margin-bottom: 1.5rem; /* ✅ 이미지와 description-text 사이 간격 추가 */
 }
 
-.mbti-description-section .description-text {
+.description-text {
   flex: 1; /* 남은 공간 모두 차지 */
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   line-height: 1.6;
+  text-align: center; /* ✅ 텍스트 중앙 정렬 */
 }
 
 .result2 h3 {
+  display: none;
   font-size: 1.5rem;
   margin-bottom: 1rem;
+  color: #6b7280;
+  text-align: center;
 }
 
 .result-cards {
-  display: grid; /* Grid 레이아웃 적용 */
+  display: none; /* Grid 레이아웃 적용 */
   grid-template-columns: 1fr; /* 기본적으로 1 컬럼 */
   gap: 1.5rem; /* gap-6 -> 1.5rem */
   margin-top: 1.5rem; /* mt-6 -> 1.5rem */
@@ -111,4 +122,73 @@
 
 .item-button:hover {
   background-color: #f9fafb;
+}
+
+/*-------------- 로딩 스피너 관련 -------------*/
+
+/* 스피너와 로딩 메시지 스타일 */
+#loadingContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* 반투명 흰색 배경 */
+  display: none; /* 초기에는 숨김 */
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; /* 스피너와 메시지를 세로로 배치 */
+  z-index: 1000; /* 다른 요소 위에 표시 */
+}
+
+.spinner {
+  border: 16px solid #f3f3f3; /* 연한 회색 */
+  border-top: 16px solid #3498db; /* 파란색 */
+  border-radius: 50%;
+  width: 200px;
+  height: 200px;
+  animation: spin 2s linear infinite;
+  margin-bottom: 20px; /* 스피너와 로딩 메시지 사이 간격 */
+  width: 150px; /* ✅ 스피너 크기 키우기 */
+  height: 150px; /* ✅ 스피너 크기 키우기 */
+  border-width: 20px; /* ✅ 스피너 선 두께 키우기 */
+  border-top-width: 20px; /* ✅ 스피너 top 선 두께 키우기 */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-message {
+  font-size: 2.1em;
+  color: #6b7280;
+}
+
+/* ✅ 추가 정보 <p> 요소 스타일 (연예인, 캐릭터, 키워드, 안내 문구) */
+#mbtiDescription p {
+  margin-bottom: 2em; /* <p> 요소 간 간격 */
+  font-size: 0.9em; /* 폰트 크기 */
+  color: #777; /* 폰트 색상 */
+  text-align: center; /* ✅ 텍스트 중앙 정렬 */
+  white-space: pre-line; /* ✅ white-space: pre-line; 속성 추가 */
+}
+
+/* ✅ MBTI 유형 설명 <span> 요소 스타일 */
+#mbtiDescription > span {
+  /* <div>#mbtiDescription 바로 아래 <span> 태그 선택 */
+  display: block; /* <span> 을 블록 요소로 변경 (margin-bottom 적용 위해) */
+  font-size: 1.2em; /* 폰트 크기 */
+  color: #333; /* 폰트 색상 */
+  margin-bottom: 2.5em; /* MBTI 설명과 연예인 정보 사이 간격 */
+  text-align: center; /* ✅ 텍스트 중앙 정렬 */
+}
+
+#mbtiDescription p strong {
+  color: #3498db;
+  font-size: 1.4em;
 }
