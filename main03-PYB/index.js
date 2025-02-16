@@ -2,7 +2,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const supabaseUrl = "https://xngpdlhdrzcdcwnpinot.supabase.co";
 const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi6InhuZ3BkbGhkcnpjZGN3bnBpbm90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk2MjM1NzMsImV4cCI6MjA1NTE5OTU3M30._BKCgacI_A-_vx-dN_eijau7Mo2ZFub3Dr0sFxnO4ks";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuZ3BkbGhkcnpjZGN3bnBpbm90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk2MjM1NzMsImV4cCI6MjA1NTE5OTU3M30._BKCgacI_A-_vx-dN_eijau7Mo2ZFub3Dr0sFxnO4ks";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 let imageUrlToSave = null;
@@ -10,6 +10,11 @@ let mbtiToSave = null;
 let mainTitleToSave = null;
 let subTitleToSave = null;
 let contentTextToSave = null;
+let GEMINI_API_KEY_YB; // API 키 변수 선언 (fetchApiKeys() 에서 값 할당)
+
+const GEMINI_BASE_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models";
+const GEMINI_MODEL_NAME = "gemini-1.5-flash";
 
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
@@ -20,7 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
   if (mbtiResult && itemResult && locationResult) {
     const prompt = generatePrompt(mbtiResult, itemResult, locationResult);
 
-    callAI(prompt)
+    fetchApiKeys() // ✅ fetchApiKeys() 함수 호출하여 API 키 먼저 가져오기
+      .then(() => callAI(prompt)) // API 키 가져오기 성공 후 callAI() 호출
       .then((result) => {
         displayAIResult(result);
       })
@@ -29,8 +35,9 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("AI 결과를 표시하는 데 실패했습니다.");
         displayImage("default_image.jpg");
       });
-  } // 저장하기 버튼 이벤트 리스너 추가
+  }
 
+  // 저장하기 버튼 이벤트 리스너 추가
   document.getElementById("save-button").addEventListener("click", function () {
     if (
       imageUrlToSave &&
@@ -49,8 +56,9 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       alert("저장할 데이터가 없습니다.");
     }
-  }); // 추가로 질문하기 버튼 이벤트 리스너 추가
+  });
 
+  // 추가로 질문하기 버튼 이벤트 리스너 추가
   document
     .getElementById("search-button")
     .addEventListener("click", async function () {
@@ -74,28 +82,29 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function generatePrompt(mbti, item, location) {
-  return `당신은 INTP 유형의 사람들에게 섬진강에서 반성 서사를 즐길 수 있는 최고의 장소와 함께 즐길 거리를 추천하는 전문가입니다. 다음 질문에 대해 상세하고 구체적으로 답변해주세요.
-
-질문: INTP 유형의 사람들에게 섬진강에서 반성 서사를 즐길 수 있는 구체적인 위치와 함께 즐길만한 것을 추천해주세요.
-
-1. 30자 이내 요약
-2. 추천에 대한 상세 내용 및 위치 (웹사이트, 주소, 운영 시간 등 포함).
-3. 섬진강에서 반성 서사를 더욱 특별하게 즐길 수 있는 방법 (경험, 팁, 관련 활동 등). 단, 추천하는 활동은 반드시 실제로 존재하는 것이어야 하며, 구체적인 정보를 제공해야 합니다. 만약 추천하는 활동이 존재하지 않는 경우, 유사한 대안을 제시해주세요.
-4. **가장 대표적인 추천 장소 1곳의 이미지 URL을 제공해주세요.** (Data URL 형식 또는 일반 웹 이미지 URL 형식 모두 가능). 이미지 URL은 텍스트 응답 마지막에 제공해주세요. 이미지 파일 형식은 PNG, JPEG, WebP 중 하나를 선택해주세요.`;
+  return `당신은 ${mbti} 유형의 사람들에게 ${location}에서 ${item}을(를) 즐길 수 있는 최고의 장소와 함께 즐길 거리를 추천하는 전문가입니다. 다음 질문에 대해 상세하고 구체적으로 답변해주세요.
+        질문: ${mbti} 유형의 사람들에게 ${location}에서 ${item}을(를) 즐길 수 있는 구체적인 위치와 함께 즐길만한 것을 추천해주세요.
+        1. 30자 이내 요약
+        2. 추천에 대한 상세 내용 및 위치 (웹사이트, 주소, 운영 시간 등 포함).
+        3. ${location}에서 ${item}을(를) 더욱 특별하게 즐길 수 있는 방법 (경험, 팁, 관련 활동 등). 단, 추천하는 활동은 반드시 실제로 존재하는 것이어야 하며, 구체적인 정보를 제공해야 합니다. 만약 추천하는 활동이 존재하지 않는 경우, 유사한 대안을 제시해주세요.
+        4. 추천 장소의 이미지를 data URL 형식으로 제공해주세요.`;
 }
+
 async function fetchApiKeys() {
   try {
-    const response = await fetch("http://localhost:3000/api/keys"); // 서버의 API 엔드포인트 호출 (예: /api/keys)
+    const response = await fetch("http://localhost:3000/api/keys"); // 서버의 API 엔드포인트 호출
     if (!response.ok) {
       throw new Error(
         `API 키 요청 실패: ${response.status} ${response.statusText}`
       );
     }
     const keys = await response.json();
-    if (!keys.GEMINI_API_KEY) {
+    GEMINI_API_KEY_YB = keys.GEMINI_API_KEY_YB; // ✅ GEMINI_API_KEY_JH 에 API 키 할당
+    console.log("API 키:", { GEMINI_API_KEY_YB: GEMINI_API_KEY_YB }); // API 키 로깅 (디버깅 용)
+    if (!GEMINI_API_KEY_YB) {
       throw new Error("GEMINI_API_KEY가 응답에 없습니다.");
     }
-    return keys.GEMINI_API_KEY;
+    return GEMINI_API_KEY_YB;
   } catch (error) {
     console.error("API 키 가져오기 오류:", error);
     alert("API 키를 가져오는 중 오류가 발생했습니다.");
@@ -105,18 +114,21 @@ async function fetchApiKeys() {
 
 async function callAI(prompt) {
   try {
-    const apiKey = await fetchApiKeys();
-    if (!apiKey) return null; // API 키가 없으면 null 반환
+    const apiKey = GEMINI_API_KEY_YB; // ✅ 전역 변수 GEMINI_API_KEY_JH 사용 (fetchApiKeys()에서 가져옴)
+    if (!apiKey) {
+      throw new Error("API 키가 없습니다.");
+    }
 
-    const url = `http://localhost:3000/call-gemini?prompt=${encodeURIComponent(
-      // ✅ 절대 경로로 수정
-      prompt
-    )}&apiKey=${encodeURIComponent(apiKey)}`;
+    const url = `${GEMINI_BASE_URL}/${GEMINI_MODEL_NAME}:generateContent`; // ✅ Gemini API URL 직접 구성 (/call-gemini 엔드포인트 제거)
     const response = await fetch(url, {
-      method: "GET",
+      method: "POST", // ✅ POST 요청 유지
       headers: {
         "Content-Type": "application/json",
+        "x-goog-api-key": apiKey, // ✅ API 키를 x-goog-api-key 헤더에 포함 (!!!)
       },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
     });
 
     if (!response.ok) {
@@ -126,10 +138,16 @@ async function callAI(prompt) {
     }
 
     const data = await response.json();
-    if (!data || !data.result) {
+    if (
+      !data ||
+      !data.candidates ||
+      !data.candidates[0].content.parts[0].text
+    ) {
+      // ✅ 응답 구조 변경에 따른 결과 추출 방식 수정
       throw new Error("Gemini API 응답 오류: 결과 형식이 올바르지 않습니다.");
     }
-    return data;
+    const resultText = data.candidates[0].content.parts[0].text; // ✅ 텍스트 결과 추출
+    return { result: resultText }; // ✅ 결과 객체 래핑 ({ result: ... })
   } catch (error) {
     console.error("Gemini API 호출 오류:", error);
     alert("AI와 연결이 끊어졌습니다.");
@@ -138,36 +156,18 @@ async function callAI(prompt) {
 }
 
 async function uploadImageToSupabase(imageDataUrl, imageName) {
-  console.log(
-    "uploadImageToSupabase: Starting upload for imageName:",
-    imageName
-  ); // ADDED
-  console.log(
-    "uploadImageToSupabase: imageDataUrl (first 50 chars):",
-    imageDataUrl.substring(0, 50) + "..."
-  ); // ADDED - Check URL prefix
-  try {
-    const blob = await fetch(imageDataUrl).then((r) => {
-      console.log("uploadImageToSupabase: fetch response:", r); // ADDED - Inspect fetch response
-      return r.blob();
-    });
-    console.log("uploadImageToSupabase: blob created successfully"); // ADDED
-    const { data, error } = await supabase.storage
-      .from("USERS_IMAGE")
-      .upload(imageName, blob);
+  const blob = await fetch(imageDataUrl).then((r) => r.blob());
+  const { data, error } = await supabase.storage
+    .from("USERS_IMAGE")
+    .upload(imageName, blob);
 
-    if (error) {
-      console.error("이미지 업로드 실패:", error);
-      return null;
-    }
-
-    const imageUrl = `${supabaseUrl}/storage/v1/object/public/USERS_IMAGE/${imageName}`;
-    return imageUrl;
-  } catch (fetchError) {
-    // Catch fetch errors specifically
-    console.error("uploadImageToSupabase: fetch error:", fetchError); // ADDED - Log fetch error object
-    return null; // Return null on fetch failure
+  if (error) {
+    console.error("이미지 업로드 실패:", error);
+    return null;
   }
+
+  const imageUrl = `<span class="math-inline">\{supabaseUrl\}/storage/v1/object/public/USERS\_IMAGE/</span>{imageName}`;
+  return imageUrl;
 }
 
 async function saveImageUrlToDatabase(
@@ -203,80 +203,46 @@ function displayImage(imageUrl) {
 }
 
 async function displayAIResult(result) {
-  console.log("displayAIResult 함수 호출됨");
-  console.log("displayAIResult result 데이터:", result);
   if (result && result.result) {
-    console.log("displayAIResult result.result 데이터:", result.result);
+    const parts = result.result.split("\n\n**3. "); // ✅ 수정: split 기준 변경 (\n3.  -> \n\n**3. )
+    const [summaryDetails, imageDataUrl] = parts; // ✅ 수정: parts 배열 구조분해 할당으로 변경
 
-    // 수정: "\n4. 대표 추천 장소 이미지\n\n" 기준으로 분리
-    const parts = result.result.split("\n4. 대표 추천 장소 이미지\n\n");
-    console.log("parts:", parts); // [✅ 추가] parts 값 로그 출력
+    if (summaryDetails) {
+      // ✅ summaryDetails 가 있을 때만 split 시도
+      const [summary, details] = summaryDetails.split("\n\n**2. "); // ✅ 수정: split 기준 변경 (\n2. -> \n\n**2. )
 
-    const textSections = parts[0]; // sections 1, 2, 3
-    console.log("textSections:", textSections); // [✅ 추가] textSections 값 로그 출력
+      if (summary && details) {
+        // ✅ summary 와 details 가 모두 있을 때만 화면 표시 시도
+        const imageName = `${Date.now()}.jpg`;
+        const imageUrl = await uploadImageToSupabase(imageDataUrl, imageName);
 
-    // 수정: sections 1, 2, 3 텍스트에서 요약(summary)과 상세 내용(details) 분리
-    const summaryParts = textSections.split("\n\n2. 추천 장소와 활동\n\n");
-    console.log("summaryParts:", summaryParts); // [✅ 추가] summaryParts 값 로그 출력
+        if (imageUrl) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const mbtiResult = urlParams.get("mbti");
+          const itemResult = urlParams.get("item");
+          const locationResult = urlParams.get("location"); // 전역 변수에 저장
 
-    const summary = summaryParts[0]
-      .replace(
-        "**1. 요약**\n\n", // Changed replace string to "**1. 요약**\n\n" to match actual title
-        ""
-      )
-      .trim(); // 요약문 추출 및 불필요한 텍스트 제거, trim() 추가
-    console.log("summary:", summary); // [✅ 추가] summary 값 로그 출력
+          imageUrlToSave = imageUrl;
+          mbtiToSave = mbtiResult;
+          mainTitleToSave = itemResult;
+          subTitleToSave = summary.replace("**1. 30자 요약**\n\n", ""); // ✅ 수정: summary 추출 및 "1. " 제거 방식 변경
+          contentTextToSave = details.replace(
+            "**2. 추천에 대한 상세 내용 및 위치**\n\n",
+            ""
+          ); // ✅ 수정: details 추출 및 "2. " 제거 방식 변경 // 화면에 표시
 
-    const detailsParts = summaryParts[1].split(
-      "\n\n3. 반성 서사를 더욱 특별하게 즐기는 방법\n\n"
-    );
-    console.log("detailsParts:", detailsParts); // [✅ 추가] detailsParts 값 로그 출력
-
-    const details =
-      "**2. 추천 장소와 활동**" + // Changed section title to "**2. 추천 장소와 활동**"
-      detailsParts[0].trim() +
-      "\n\n**3. 반성 서사를 더욱 특별하게 즐기는 방법**" + // Changed section title to "**3. 반성 서사를 더욱 특별하게 즐기는 방법**"
-      detailsParts[1].trim(); // 상세 내용 추출 및 섹션 제목 재구성, trim() 추가
-    console.log("details:", details); // [✅ 추가] details 값 로그 출력
-
-    const imageSection = parts[1];
-    console.log("imageSection:", imageSection); // [✅ 추가] imageSection 값 로그 출력
-    const imageUrlMatch = imageSection.match(/\[.*?URL\]\((.*?)\)/); // 수정된 정규 표현식
-
-    let imageUrl = null;
-    if (imageUrlMatch && imageUrlMatch[1]) {
-      imageUrl = imageUrlMatch[1];
-      console.log("imageUrl:", imageUrl); // imageUrl 로그 출력
-    }
-    console.log("imageUrlMatch:", imageUrlMatch); // [✅ 추가] imageUrlMatch 값 로그 출력
-    console.log("최종 imageUrl:", imageUrl); // [✅ 추가] 최종 imageUrl 값 로그 출력
-
-    if (imageUrl) {
-      const imageName = `${Date.now()}.jpg`;
-      const imageUrlForDisplay = await uploadImageToSupabase(
-        imageUrl,
-        imageName
-      ); // 변수명 변경 (imageUrl -> imageUrlForDisplay)
-
-      if (imageUrlForDisplay) {
-        // 변수명 변경 (imageUrl -> imageUrlForDisplay)
-        const urlParams = new URLSearchParams(window.location.search);
-        const mbtiResult = urlParams.get("mbti");
-        const itemResult = urlParams.get("item");
-        const locationResult = urlParams.get("location"); // 전역 변수에 저장
-
-        imageUrlToSave = imageUrlForDisplay; // 변수명 변경 (imageUrl -> imageUrlForDisplay)
-        mbtiToSave = mbtiResult;
-        mainTitleToSave = itemResult;
-        subTitleToSave = summary;
-        contentTextToSave = details; // 화면에 표시
-
-        document.querySelector(".title-area h1").textContent = itemResult;
-        document.querySelector(".details h2").textContent = summary;
-        document.querySelector(".details .region p").textContent = details;
-        displayImage(imageUrlForDisplay); // 변수명 변경 (imageUrl -> imageUrlForDisplay)
+          document.querySelector(".mainTitle h1").textContent = itemResult; // ✅ 수정: .title-area -> .mainTitle
+          document.querySelector(".subTitle h2").textContent = subTitleToSave; // ✅ 수정: .details -> .subTitle
+          document.querySelector(".subTitle .region p").textContent =
+            contentTextToSave; // ✅ 수정: .details -> .subTitle
+          displayImage(imageUrl);
+        }
+      } else {
+        console.error("summary 또는 details 추출 실패"); // ✅ [추가] summary 또는 details 추출 실패 로그
+        displayImage("default_image.jpg");
       }
     } else {
+      console.error("parts 분리 실패"); // ✅ [추가] parts 분리 실패 로그
       displayImage("default_image.jpg");
     }
   } else {
