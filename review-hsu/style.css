@@ -18,3 +18,29 @@ main {
 .text-gray {
   color: gray;
 }
+
+.card h5,
+.card p {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card img {
+  object-fit: cover;
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+}
+
+.card .flex-grow-1 {
+  min-width: 0; /* 부모 요소에 따라 크기 조정 */
+}
+
+.card .text-truncate {
+  max-width: 100%;
+  word-wrap: break-word; /* 긴 단어 줄바꿈 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

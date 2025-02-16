@@ -9,3 +9,9 @@
 body {
   font-family: 'Open Sans', sans-serif;
 }
+
+.post_word {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
