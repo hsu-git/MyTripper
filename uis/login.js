@@ -23,8 +23,33 @@ document
         // JWT를 localStorage에 저장
         localStorage.setItem("token", result.data.token);
         localStorage.setItem("user_id", result.data.user_id);
-        // 로그인 후 페이지 이동 (예: 메인 페이지)
-        window.location.href = "/main01-PYB/index.html";
+
+        // 이전 페이지 URL 확인
+        const 이전_페이지_URL = document.referrer;
+        const 회원가입_페이지_URL = "signup.html"; // ⚠️ 회원가입 페이지 파일명 (실제 파일명으로 수정!)
+        const 비밀번호_재설정_페이지_URL = "find_password.html"; // ⚠️ 비밀번호 재설정 페이지 파일명 (실제 파일명으로 수정!)
+
+        // 이전 페이지 URL 콘솔에 출력 (디버깅용, 필요시 주석 해제)
+        // console.log("이전 페이지 URL (document.referrer):", 이전_페이지_URL); // 🟢 document.referrer 값 콘솔에 출력 (확인용)
+
+
+        // 이전 페이지가 회원가입 페이지 또는 비밀번호 재설정 페이지인지 확인하여 조건부 리디렉션
+        if (
+          이전_페이지_URL &&
+          (이전_페이지_URL.endsWith(회원가입_페이지_URL) ||
+            이전_페이지_URL.endsWith(비밀번호_재설정_페이지_URL))
+        ) {
+          // 이전 페이지가 회원가입 페이지 또는 비밀번호 재설정 페이지인 경우 메인 페이지로 이동
+          window.location.href = "../main01-PYB/index.html"; // ⚠️ 메인 페이지 경로 (실제 경로로 수정!)
+        } else {
+          // 이전 페이지가 회원가입 페이지나 비밀번호 재설정 페이지가 아닌 경우 기존 로직 적용
+          if (이전_페이지_URL) {
+            window.location.href = 이전_페이지_URL;
+          } else {
+            // 이전 페이지 URL이 없는 경우 기본 페이지로 이동
+            window.location.href = "../main01-PYB/index.html"; // ⚠️ 메인 페이지 경로 (실제 경로로 수정!)
+          }
+        }
       } else {
         alert("로그인 실패: " + result.message); // 오류 메시지 표시
       }

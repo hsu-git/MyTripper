@@ -9,30 +9,30 @@ function loadComponent(id, file) {
 }
 
 function updateHeaderBasedOnLoginStatus() {
-  const token = localStorage.getItem('token');
-  const signinItem = document.getElementById('signin-item');
-  const registerItem = document.getElementById('register-item');
-  const logoutItem = document.getElementById('logout-item');
-  const myPageItem = document.getElementById('mypage-item');
+  const token = localStorage.getItem("token");
+  const signinItem = document.getElementById("signin-item");
+  const registerItem = document.getElementById("register-item");
+  const logoutItem = document.getElementById("logout-item");
+  const myPageItem = document.getElementById("mypage-item");
 
   if (token) {
     // JWT 토큰이 존재하면 (로그인 상태)
-    signinItem.style.display = 'none'; // "Sign in" 버튼 숨김
-    registerItem.style.display = 'none'; // "Register" 버튼 숨김
-    logoutItem.style.display = 'block'; // "Logout" 버튼 표시
-    myPageItem.style.display = 'block'; // "My Page" 버튼 표시
+    signinItem.style.display = "none"; // "Sign in" 버튼 숨김
+    registerItem.style.display = "none"; // "Register" 버튼 숨김
+    logoutItem.style.display = "block"; // "Logout" 버튼 표시
+    myPageItem.style.display = "block"; // "My Page" 버튼 표시
   } else {
     // JWT 토큰이 없으면 (로그아웃 상태)
-    signinItem.style.display = 'block'; // "Sign in" 버튼 표시
-    registerItem.style.display = 'block'; // "Register" 버튼 표시
-    logoutItem.style.display = 'none'; // "Logout" 버튼 숨김
-    myPageItem.style.display = 'none'; // "My Page" 버튼 숨김
+    signinItem.style.display = "block"; // "Sign in" 버튼 표시
+    registerItem.style.display = "block"; // "Register" 버튼 표시
+    logoutItem.style.display = "none"; // "Logout" 버튼 숨김
+    myPageItem.style.display = "none"; // "My Page" 버튼 숨김
   }
 }
 
 function logout() {
-  localStorage.removeItem('token'); // localStorage에서 JWT 토큰 제거
-  localStorage.removeItem('user_id');
+  localStorage.removeItem("token"); // localStorage에서 JWT 토큰 제거
+  localStorage.removeItem("user_id");
   updateHeaderBasedOnLoginStatus(); // 헤더 업데이트
   alert("로그아웃 되었습니다.");
   window.location.href = "/MyTripper/main01-PYB/index.html"; // 메인 페이지로 이동 (원하는 페이지로 변경 가능)
@@ -42,5 +42,5 @@ function logout() {
 }
 
 // 헤더와 푸터 로드
-loadComponent('header', '../_common/header.html');
-loadComponent('footer', '../_common/footer.html');
+loadComponent("header", "../_common/header.html");
+loadComponent("footer", "../_common/footer.html");

@@ -22,6 +22,8 @@ document
 
       if (response.ok) {
         alert("회원가입 성공!"); // 성공 메시지 표시
+        // 회원가입 성공 후 로그인 페이지로 리디렉션 하기 전에
+        localStorage.setItem("redirect_url_after_signup", window.location.href); // 현재 페이지 URL 저장
         window.location.href = "login.html"; // 로그인 페이지로 이동
       } else {
         alert("회원가입 실패: " + result.error); // 오류 메시지 표시
