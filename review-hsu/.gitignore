@@ -1,0 +1,17 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Lock file (optional)
+package-lock.json
+
+# OS / Editor files (optional)
+.DS_Store
+Thumbs.db
+.vscode/
+
+#aside
+aside.js
+aside.html
