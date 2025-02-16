@@ -92,6 +92,51 @@ function modifyInfo() {
 }
 
 // 내 글 가져오기
+const myPostData = {
+  number: '',
+  title: '',
+  content: '',
+  img: '',
+  date: '',
+};
+async function getMyPosts() {
+  const user_id = localStorage.getItem('user_id');
+
+  try {
+    const response = await fetch(`${dbUrl}/mypost?id=${user_id}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      alert('내 글 조회에 실패했습니다. 다시 시도해주세요.');
+      return;
+    }
+    const postDatas = await response.json();
+    console.log(postDatas);
+    makePosts(postDatas);
+  } catch (error) {
+    alert('내 글 조회에 실패했습니다. 다시 시도해주세요.');
+    console.error(error);
+  }
+}
+
+function makePosts(postDatas) {
+  const postDiv = document.querySelector('#post-container');
+  postDiv.innerHTML = postDatas
+    .map(
+      (post) =>
+        ` <a class="nav-link" href="#">
+            <div class="border mb-3 rounded-3 p-2">
+              <h5 class="fw-bold">${post.main_title}</h5>
+              <img src="${post.image_url}"></img>
+              <label for="text" class="border-0">${post.content_text}</label>
+            </div>
+          </a>
+    `
+    )
+    .join('');
+}
 
 window.addEventListener('DOMContentLoaded', () => {
   aside_Active();
@@ -102,7 +147,8 @@ window.addEventListener('DOMContentLoaded', () => {
       getInfo();
       modifyInfo();
       break;
-    case 'mydocument':
+    case 'mypost':
+      getMyPosts();
       break;
   }
 });
