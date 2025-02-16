@@ -4,56 +4,53 @@
 const LIMIT = 5;
 let currentPage = 1;
 let totalPages = 1;
+let showReviewsOnly = false;
 
-// (A) 여러 MBTI 검색을 누적할 배열
+// 여러 MBTI 검색을 누적할 배열
 let selectedMbti = [];
 
-// (B) 텍스트 검색어 (하나만)
+// 텍스트 검색어 (하나만)
 let currentTextSearch = "";
 
 /**
- * (1) 페이지 로드 후 이벤트 설정
+ * 페이지 로드 후 이벤트 설정
  */
 window.addEventListener("DOMContentLoaded", () => {
-  // (A) 페이지네이션 클릭
+  // 페이지네이션 클릭
   const paginationEl = document.getElementById("pagination");
   paginationEl.addEventListener("click", (e) => {
     if (e.target.matches(".page-link")) {
       const pageNum = parseInt(e.target.dataset.page, 10);
-      if (isNaN(pageNum)) return;
-      if (pageNum < 1 || pageNum > totalPages) return;
-
-      fetchBoardData(pageNum, selectedMbti, currentTextSearch);
+      if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
+        fetchBoardData(pageNum, selectedMbti, currentTextSearch);
+      }
     }
   });
 
-  // (B) MBTI 드롭다운
+  // MBTI 드롭다운
   const mbtiSelect = document.getElementById("mbtiSelect");
+
   mbtiSelect.addEventListener("change", () => {
     const val = mbtiSelect.value;
-    if (val === "MBTI별 게시글") {
-      return;
-    }
-    // 중복 추가 방지
-    if (!selectedMbti.includes(val)) {
+    if (val !== "MBTI별 게시글" && !selectedMbti.includes(val)) {
       selectedMbti.push(val);
+      mbtiSelect.value = "MBTI별 게시글";
+      renderSearchBadges();
+      updateSearchResetButtonVisibility();
+      fetchBoardData(1, selectedMbti, currentTextSearch);
     }
-    mbtiSelect.value = "MBTI별 게시글";
-
-    renderSearchBadges();
-    updateSearchResetButtonVisibility();
-
-    fetchBoardData(1, selectedMbti, currentTextSearch);
   });
 
-  // (C) 검색 초기화 버튼
+  // 검색 초기화 버튼
   const btnSearchReset = document.getElementById("btnSearchReset");
   btnSearchReset.addEventListener("click", () => {
     // 모든 검색 조건 리셋
     selectedMbti = [];
     currentTextSearch = "";
+    showReviewsOnly = false;
     // 검색창도 비우기
     document.getElementById("textSearchInput").value = "";
+    document.getElementById("reviewCheckbox").checked = false;
 
     renderSearchBadges();
     updateSearchResetButtonVisibility();
@@ -61,7 +58,7 @@ window.addEventListener("DOMContentLoaded", () => {
     fetchBoardData(1, selectedMbti, currentTextSearch);
   });
 
-  // (D) 텍스트 검색
+  // 텍스트 검색
   const textSearchInput = document.getElementById("textSearchInput");
   const btnSearchText = document.getElementById("btnSearchText");
 
@@ -89,7 +86,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // (E) 검색 배지 클릭 이벤트 (MBTI / 텍스트 제거)
+  // 검색 배지 클릭 이벤트 (MBTI / 텍스트 제거)
   const searchBadges = document.getElementById("searchBadges");
   searchBadges.addEventListener("click", (e) => {
     // MBTI 배지의 X 버튼
@@ -110,26 +107,42 @@ window.addEventListener("DOMContentLoaded", () => {
       updateSearchResetButtonVisibility();
       fetchBoardData(1, selectedMbti, currentTextSearch);
     }
+    if (e.target.matches(".review-remove")) {
+      showReviewsOnly = false;
+      document.getElementById("reviewCheckbox").checked = false;
+      renderSearchBadges();
+      updateSearchResetButtonVisibility();
+      fetchBoardData(1, selectedMbti, currentTextSearch);
+    }
   });
 
-  // (F) 페이지 처음 로드
+  const reviewCheckbox = document.getElementById("reviewCheckbox");
+  reviewCheckbox.addEventListener("change", () => {
+    showReviewsOnly = reviewCheckbox.checked;
+    renderSearchBadges();
+    updateSearchResetButtonVisibility();
+    fetchBoardData(1, selectedMbti, currentTextSearch);
+  });
+
+  // 페이지 처음 로드
   fetchBoardData(1, selectedMbti, currentTextSearch);
 });
 
 /**
- * (2) 검색 배지 렌더링 (MBTI + 텍스트)
+ * 검색 배지 렌더링 (MBTI + 텍스트) (+ 후기 필터 추가)
  */
 function renderSearchBadges() {
   const searchBadges = document.getElementById("searchBadges");
   searchBadges.innerHTML = "";
 
-  // (A) MBTI 배지들
+  // MBTI 배지들
   selectedMbti.forEach((mbti) => {
     const badge = document.createElement("span");
     badge.classList.add("badge", "me-1");
     // badge.style.backgroundColor = "darkgray";
     badge.style.backgroundColor = "#934A5F";
     badge.style.color = "#E5E5E5";
+    // badge.style.color = "#FFF6DA";
     badge.style.marginBottom = "5px";
 
     badge.innerHTML = `
@@ -146,13 +159,14 @@ function renderSearchBadges() {
     searchBadges.appendChild(badge);
   });
 
-  // (B) 텍스트 검색 배지 (하나만)
+  // 텍스트 검색 배지 (하나만)
   if (currentTextSearch) {
     const textBadge = document.createElement("span");
     textBadge.classList.add("badge", "me-1");
     // textBadge.style.backgroundColor = "lightblue"; // 색 구분
     textBadge.style.backgroundColor = "#C2B4D6"; // 색 구분
-    textBadge.style.color = "#57648C";
+    textBadge.style.color = "#433E49";
+    // textBadge.style.color = "#E5E5E5";
     textBadge.style.marginBottom = "5px";
 
     textBadge.innerHTML = `
@@ -167,15 +181,31 @@ function renderSearchBadges() {
     `;
     searchBadges.appendChild(textBadge);
   }
+  // 후기 게시글 보기 배지
+  if (showReviewsOnly) {
+    const reviewBadge = document.createElement("span");
+    reviewBadge.classList.add("badge", "me-1");
+    reviewBadge.style.backgroundColor = "#57648C";
+    // reviewBadge.style.color = "#F2D7D9";
+    reviewBadge.style.color = "#E5E5E5";
+    reviewBadge.style.marginBottom = "5px";
+
+    reviewBadge.innerHTML = `
+      후기 게시글
+      <button type="button" class="review-remove" 
+        style="border:none;background:none;color:white;margin-left:5px;">x</button>
+    `;
+    searchBadges.appendChild(reviewBadge);
+  }
 }
 
 /**
- * (3) 검색 초기화 버튼 표시/숨김
+ * 검색 초기화 버튼 표시/숨김
  */
 function updateSearchResetButtonVisibility() {
   const btnSearchReset = document.getElementById("btnSearchReset");
   // MBTI나 텍스트 검색 중 하나라도 있으면 보이기
-  if (selectedMbti.length > 0 || currentTextSearch !== "") {
+  if (selectedMbti.length > 0 || currentTextSearch !== "" || showReviewsOnly) {
     btnSearchReset.style.display = "inline-block";
   } else {
     btnSearchReset.style.display = "none";
@@ -183,7 +213,7 @@ function updateSearchResetButtonVisibility() {
 }
 
 /**
- * (4) 서버에 게시글 요청
+ *  서버에 게시글 요청
  */
 async function fetchBoardData(page = 1, mbtiList = [], searchText = "") {
   try {
@@ -196,11 +226,17 @@ async function fetchBoardData(page = 1, mbtiList = [], searchText = "") {
     if (searchText) {
       params.append("search", searchText);
     }
+    if (showReviewsOnly) {
+      params.append("withReview", "true");
+    }
 
     // 🔍 서버 포트를 명시 (3000)
     const res = await fetch(
       `http://localhost:3000/api/reviews?${params.toString()}`
     );
+
+    // (상대 경로로 변경)
+    // const res = await fetch(`/api/reviews?${params.toString()}`);
     const json = await res.json();
     // const res = await fetch(`/api/reviews?${params.toString()}`);
     // const json = await res.json();
@@ -220,7 +256,7 @@ async function fetchBoardData(page = 1, mbtiList = [], searchText = "") {
 }
 
 /**
- * (5) 게시글 목록 렌더링
+ * 게시글 목록 렌더링
  *    - travelplan_plus 컬럼: serial_number, sub_title, content_text, review, plan_mbti, post_day, image_url
  */
 function renderBoardData(data) {
@@ -241,34 +277,55 @@ function renderBoardData(data) {
     const postDay = row.post_day ?? "";
     const imgUrl = row.image_url ?? "";
 
-    // 카드 컨테이너
+    //  텍스트 줄임: 1줄 제한
+    const previewContent =
+      content.length > 60 ? `${content.substring(0, 60)}...` : content;
+    const previewTitle =
+      title.length > 30 ? `${title.substring(0, 30)}...` : title;
+    const previewReview =
+      review.length > 40 ? `${review.substring(0, 40)}...` : review;
+
+    //  카드 생성
     const cardDiv = document.createElement("div");
     cardDiv.classList.add("card", "mb-3", "p-3");
 
     cardDiv.innerHTML = `
-      <!-- 링크 예시 -->
       <a
         href="/review2-KHJ/index.html?id=${serialNumber}"
         style="text-decoration: none; color: inherit; display: block;"
       >
-        <div class="d-flex">
-          <div style="width:80px; height:80px; overflow:hidden; background:#f0f0f0;">
+        <div class="d-flex align-items-start">
+          <!-- 이미지 -->
+          <div style="min-width:100px; height:100px; overflow:hidden; border-radius:10px; margin-right:15px;">
             <img
               src="${imgUrl}"
               alt="이미지"
-              style="width:100%; height:100%; object-fit:cover;"
+              style="width:100px; height:100px; object-fit:cover;"
             />
           </div>
-          <div class="ms-3">
-            <h5>${title}</h5>
-            <p style="margin-bottom:5px;">${content}</p>
+
+          <!-- 텍스트 내용 -->
+          <div class="flex-grow-1">
+            <!-- 제목 -->
+            <h5 class="text-truncate" style="max-width:100%; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;font-weight: bold;">
+              ${previewTitle}
+            </h5>
+
+            <!-- 본문 -->
+            <p class="text-truncate" style="max-width:100%; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis;">
+              ${previewContent}
+            </p>
+
+            <!-- 후기 -->
             ${
               review
-                ? `<p style="font-size: small; color:#555; margin-bottom:0;">
-                     후기: ${review}
+                ? `<p class="text-truncate" style="max-width:100%; word-wrap: break-word; overflow: hidden; text-overflow: ellipsis; font-size: small; color:#555; margin-bottom:0;">
+                     [후기] ${previewReview}
                    </p>`
                 : ""
             }
+
+            <!-- 하단 정보 -->
             <p style="font-size: small; color:#999;">
               MBTI: ${mbti} / 작성일: ${postDay}
             </p>
@@ -282,7 +339,7 @@ function renderBoardData(data) {
 }
 
 /**
- * (6) 페이지네이션 (Prev, 1..N, Next)
+ * 페이지네이션 (Prev, 1..N, Next)
  */
 function setupPagination(current, total) {
   const paginationEl = document.getElementById("pagination");
