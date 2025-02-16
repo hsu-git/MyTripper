@@ -42,18 +42,13 @@ body {
   display: inline-block;
 }
 
-.result-button,
-.login-required-button {
+.result-button {
   padding: 15px 30px;
   background-color: #007bff;
   color: #fff;
   border: none;
   cursor: pointer;
   margin-top: 20px;
-  display: block; /* 블록 요소로 변경 */
-  margin-left: auto; /* 왼쪽 마진 자동 설정 */
-  margin-right: auto; /* 오른쪽 마진 자동 설정 */
-  text-align: center; /* 텍스트 가운데 정렬 */
 }
 
 .mbti-option {

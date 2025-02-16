@@ -2,14 +2,8 @@ body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-  background-image: url("image.jpg"); /* 배경 이미지 설정 */
-  background-size: cover; /* 화면 전체 채우기 */
-  background-attachment: fixed; /* 스크롤 따라오기 */
+  color: rgb(18, 3, 3) !important; /* 텍스트 색상 흰색으로 변경 */
 }
-
 .header-content {
   display: flex;
   flex-direction: column;
@@ -92,4 +86,15 @@ main {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.search-area,
+.details {
+  backdrop-filter: blur(2px); /* 블러 효과 적용 */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* 반투명 흰색 배경 추가 (선택 사항) */
 }

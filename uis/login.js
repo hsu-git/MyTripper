@@ -23,6 +23,7 @@ document
         // JWT를 localStorage에 저장
         localStorage.setItem("token", result.data.token);
         localStorage.setItem("user_id", result.data.user_id);
+<<<<<<< HEAD
 
         // 이전 페이지 URL 확인
         const 이전_페이지_URL = document.referrer;
@@ -50,6 +51,10 @@ document
             window.location.href = "../main01-PYB/index.html"; // ⚠️ 메인 페이지 경로 (실제 경로로 수정!)
           }
         }
+=======
+        // 로그인 후 페이지 이동 (예: 메인 페이지)
+        window.location.href = "/main01-PYB/index.html";
+>>>>>>> 0f8b84bb9f1c4b7b862cb9cd6d479b06c89a55d0
       } else {
         alert("로그인 실패: " + result.message); // 오류 메시지 표시
       }
