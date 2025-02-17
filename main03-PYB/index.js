@@ -192,7 +192,7 @@ async function callGeminiAI(prompt) {
 async function uploadImageToSupabase(imageDataUrl, imageName) {
   try {
     console.log("이미지 URL:", imageDataUrl); // ✅ 이미지 URL 콘솔에 직접 로그 (URL 유효성 확인)
-    const proxyImageUrl = `http://localhost:3000/api/proxy-image?imageUrl=${encodeURIComponent(
+    const proxyImageUrl = `https://nifty-curly-map.glitch.me/api/proxy-image?imageUrl=${encodeURIComponent(
       imageDataUrl
     )}`;
     const response = await fetch(proxyImageUrl); // ✅ 프록시 API 엔드포인트로 fetch 요청 (CORS 우회)
@@ -406,7 +406,7 @@ function generatePrompt(mbti, item, location) {
 async function fetchApiKeys() {
   // ... (기존 fetchApiKeys 함수 코드와 동일) ...
   try {
-    const response = await fetch("http://localhost:3000/api/keys"); // 서버의 API 엔드포인트 호출
+    const response = await fetch("https://nifty-curly-map.glitch.me/api/keys"); // 서버의 API 엔드포인트 호출
     if (!response.ok) {
       throw new Error(
         `API 키 요청 실패: ${response.status} ${response.statusText}`
