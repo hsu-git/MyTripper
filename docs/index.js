@@ -70,7 +70,7 @@ resultButton.addEventListener('click', (event) => {
   console.log('MBTI 결과값:', mbtiResult);
 
   // URL 파라미터에 mbti 값을 포함하여 targetUrl 생성
-  const targetUrl = `/MyTripper/main02-CJH/index.html?mbti=${mbtiResult}`;
+  const targetUrl = `../main02-CJH/index.html?mbti=${mbtiResult}`;
 
   console.log('Target URL:', targetUrl); // targetUrl 확인
 
@@ -129,17 +129,17 @@ function logout() {
   updateHeaderBasedOnLoginStatus(); // 헤더 업데이트
   updateResultButtonVisibility(); // 결과보기 버튼 업데이트
   alert('로그아웃 되었습니다.');
-  window.location.href = '/MyTripper/docs/index.html'; // 메인 페이지로 이동 (원하는 페이지로 변경 가능)
+  window.location.href = 'index.html'; // 메인 페이지로 이동 (원하는 페이지로 변경 가능)
 
   // (선택 사항) 서버에 로그아웃 요청을 보낼 수도 있습니다.
   // fetch("http://localhost:3000/logout", { method: "POST" });
 }
 
 // 헤더와 푸터 로드
-loadComponent('header', '/MyTripper/_common/header.html');
-loadComponent('footer', '/MyTripper/_common/footer.html');
+loadComponent('header', 'common/header.html');
+loadComponent('footer', 'common/footer.html');
 
 // "로그인이 필요합니다" 버튼 클릭 이벤트 핸들러 추가
 loginRequiredButton.addEventListener('click', () => {
-  window.location.href = '/MyTripper/uis/login.html';
+  window.location.href = '../uis/login.html';
 });
