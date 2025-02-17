@@ -188,8 +188,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   // URL에서 serial_number 가져오기 (async 함수 안에서 다시 가져올 필요 없음)
 
   // 🌟 후기 게시글 데이터 가져오기 및 표시
-  // const reviewPost = await getReviewPost(serial_number);
-  // displayReviewPost(reviewPost);
+  const reviewPost = await getReviewPost(serial_number);
+  displayReviewPost(reviewPost);
 
   // 댓글 데이터 가져오기 및 표시 (기존 코드)
   const comments = await getComments();
