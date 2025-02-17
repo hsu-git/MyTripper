@@ -106,3 +106,7 @@ main {
 .search-result-text {
   white-space: pre-wrap; /* 줄 바꿈 유지 */
 }
+.subTitle .region p pre {
+  white-space: pre-wrap;
+  font-family: Arial, sans-serif; /* 원하는 글꼴로 변경 */
+}
