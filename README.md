@@ -31,10 +31,6 @@
 3.  **웹 서비스 개발**: HTML, CSS, JavaScript, Node.js, Supabase를 이용하여 웹 서비스를 개발했습니다.
 4.  **테스트 및 개선**: 사용자 테스트를 통해 서비스를 개선하고, 기능을 추가했습니다.
 
-### 배포
-
-  * GitHub Pages를 통해 배포할 예정입니다. ([GitHub Pages 배포 가이드 참고](https://www.google.com/url?sa=E&source=gmail&q=https://pages.github.com/))
-
 ### 향후 계획
 
   * **추가 기능**: 사용자 피드백을 기반으로 추천 정확도를 높이고, 다양한 기능을 추가할 예정입니다. (예: 여행 일정 추천, 여행 후기 기능 등)
