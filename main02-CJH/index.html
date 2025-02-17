@@ -37,64 +37,66 @@
       <!-- 5. 해당 지역 버튼을 누르면 (다음페이지) MBTI,지역,활동성 정보를 기반으로 상세 위치표현 -->
       <body>
         <div id="root">
-          <section class="result2">
+          <section class="result2" data-aos="fade-up" data-aos-duration="1000">
             <div class="loading-container" id="loadingContainer">
               <div class="spinner"></div>
               <p class="loading-message">AI 분석중입니다...</p>
             </div>
-        <section class="mbti-description-section">
-          <div class="image-description-area">
-            <img id="resultImage" />
-            <div id="mbtiDescription" class="description-text">
-              MBTI 유형 분석중..
-            </div>
-          </div>
-        </section>
-        
-        <section class="result2">
-          <h3>아래의 결과를 보고 여행을 떠나고 싶은 지역을 골라주세요</h3>
-          <div class="result-cards">
-            <div class="card result-item">
-              <div class="card-title-image-area">
-                <img src="" alt="Card 1 Image" class="card-image" />
-              </div>
-              <p class="card-text item-text food-result">음식 추천 결과</p>
-              <div class="card-buttons flex">
-                <button class="item-button">1</button>
-                <button class="item-button">2</button>
-                <button class="item-button">3</button>
+          <section class="mbti-description-section">
+            <div class="image-description-area">
+              <img id="resultImage" />
+              <div id="mbtiDescription" class="description-text">
+                MBTI 유형 분석중..
               </div>
             </div>
+          </section>
 
-            <div class="card result-item">
-              <div class="card-title-image-area">
-                <img src="" alt="Card 2 Image" class="card-image" />
-              </div>
-              <p class="card-text item-text activity-result-1">
-                액티비티 추천 1 결과
-              </p>
-              <div class="card-buttons flex ">
-                <button class="item-button">1</button>
-                <button class="item-button">2</button>
-                <button class="item-button">3</button>
-              </div>
-            </div>
+          <section class="result2">
+            <h3>아래의 결과를 보고 여행을 떠나고 싶은 지역을 골라주세요</h3>
+            <div class="result-cards container">
+              <div class="row">
+                <div class="card result-item col-md-4">
+                  <div class="card-title-image-area">
+                    <img src="" alt="Card 1 Image" class="card-image" />
+                  </div>
+                  <p class="card-text item-text food-result">음식 추천 결과</p>
+                  <div class="card-buttons flex">
+                    <button class="item-button">1</button>
+                    <button class="item-button">2</button>
+                    <button class="item-button">3</button>
+                  </div>
+                </div>
 
-            <div class="card result-item">
-              <div class="card-title-image-area">
-                <img src="" alt="Card 3 Image" class="card-image" />
-              </div>
-              <p class="card-text item-text activity-result-2">
-                액티비티 추천 2 결과
-              </p>
-              <div class="card-buttons flex ">
-                <button class="item-button">1</button>
-                <button class="item-button">2</button>
-                <button class="item-button">3</button>
+                <div class="card result-item col-md-4">
+                  <div class="card-title-image-area">
+                    <img src="" alt="Card 2 Image" class="card-image" />
+                  </div>
+                  <p class="card-text item-text activity-result-1">
+                    액티비티 추천 1 결과
+                  </p>
+                  <div class="card-buttons flex ">
+                    <button class="item-button">1</button>
+                    <button class="item-button">2</button>
+                    <button class="item-button">3</button>
+                  </div>
+                </div>
+
+                <div class="card result-item col-md-4">
+                  <div class="card-title-image-area">
+                    <img src="" alt="Card 3 Image" class="card-image" />
+                  </div>
+                  <p class="card-text item-text activity-result-2">
+                    액티비티 추천 2 결과
+                  </p>
+                  <div class="card-buttons flex ">
+                    <button class="item-button">1</button>
+                    <button class="item-button">2</button>
+                    <button class="item-button">3</button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
       </body>
       <!-- Body -->
 
@@ -108,5 +110,9 @@
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+      AOS.init();
+    </script>
   </body>
 </html>
