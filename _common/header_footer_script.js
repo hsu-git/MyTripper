@@ -50,6 +50,6 @@ function logout() {
 }
 
 // 헤더와 푸터 로드
-loadComponent('header', './_common/header.html');
-loadComponent('footer', './_common/footer.html');
+loadComponent('header', '/header.html');
+loadComponent('footer', '/footer.html');
 loadMetaTags('./_common/meta-tags.html');
