@@ -43,13 +43,13 @@ function logout() {
   localStorage.removeItem('user_id');
   updateHeaderBasedOnLoginStatus(); // 헤더 업데이트
   alert('로그아웃 되었습니다.');
-  window.location.href = '/MyTripper/docs/index.html'; // 메인 페이지로 이동 (원하는 페이지로 변경 가능)
+  window.location.href = './index.html'; // 메인 페이지로 이동 (원하는 페이지로 변경 가능)
 
   // (선택 사항) 서버에 로그아웃 요청을 보낼 수도 있습니다.
   // fetch("http://localhost:3000/logout", { method: "POST" });
 }
 
 // 헤더와 푸터 로드
-loadComponent('header', '/MyTripper/_common/header.html');
-loadComponent('footer', '/MyTripper/_common/footer.html');
-loadMetaTags('/MyTripper/_common/meta-tags.html');
+loadComponent('header', './_common/header.html');
+loadComponent('footer', './_common/footer.html');
+loadMetaTags('./_common/meta-tags.html');
