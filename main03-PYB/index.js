@@ -230,32 +230,31 @@ async function saveImageUrlToDatabase(
   subTitle,
   contentText
 ) {
-  console.log("saveImageUrlToDatabase 파라미터:", {
-    // ✅ 파라미터 로그
+  console.log("saveImageUrlToDatabase 파라미터 (삽입):", {
+    // ✅ 로그 메시지 변경 (삽입)
     imageUrl,
     mbti,
     mainTitle,
     subTitle,
     contentText,
   });
-  console.log("✅ eq 조건 직전 mbti 값:", mbti); // ✅ mbti 값 로그 (eq 조건 직전)
-  const { error } = await supabase
-    .from("travelplan")
-    .update({
+  console.log("✅ insert 직전 mbti 값:", mbti); // ✅ 로그 메시지 변경 (insert 직전)
+  const { data, error } = await supabase.from("travelplan").insert([
+    // ✅ update() 대신 insert() 메서드 사용, 배열 형태로 데이터 전달
+    {
+      plan_mbti: mbti, // ✅ plan_mbti 컬럼 포함 (삽입 시 필요)
       image_url: imageUrl,
       main_title: mainTitle,
       sub_title: subTitle,
-      content_text: contentText,
-    })
-    .eq("plan_mbti", mbti);
-
+      content_text: contentText, // time_test 컬럼은 defaultvalue: now() 에 의해 자동 설정됩니다. // serial_number 컬럼은 auto-increment (자동 증가) 설정에 의해 자동 생성됩니다.
+    },
+  ]); // .eq("plan_mbti", mbti); // ✅ insert() 에는 eq() 조건 불필요, 제거
   if (error) {
-    console.error("❌ 이미지 URL 저장 실패:", error);
-    alert("❌ travelplan 테이블 정보 저장 실패: " + error.message); // ✅ 오류 메시지와 함께 alert 추가
-    // 또는 더 눈에 띄는 콘솔 로그 사용:
-    // console.error("🔥🔥🔥 travelplan 테이블 저장 실패:", error);
+    console.error("❌ travelplan 테이블 데이터 삽입 실패:", error); // ✅ 오류 메시지 변경 (삽입 실패)
+    alert("❌ travelplan 테이블 정보 저장 실패: " + error.message); // ✅ 알림 메시지 변경 (삽입 실패) // 또는 더 눈에 띄는 콘솔 로그 사용: // console.error("🔥🔥🔥 travelplan 테이블 삽입 실패:", error);
   } else {
-    console.log("✅ travelplan 테이블 업데이트 성공!"); // ✅ 성공 로그
+    console.log("✅ travelplan 테이블 삽입 성공!"); // ✅ 성공 로그 메시지 변경 (삽입 성공)
+    console.log("✅ 삽입된 데이터:", data); // ✅ 삽입된 데이터 로그 추가 (디버깅 용이)
   }
 }
 
