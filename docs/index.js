@@ -141,5 +141,5 @@ loadComponent('footer', '../_common/footer.html');
 
 // "로그인이 필요합니다" 버튼 클릭 이벤트 핸들러 추가
 loginRequiredButton.addEventListener('click', () => {
-  window.location.href = '../uis/login.html';
+  window.location.href = '/MyTripper/uis/login.html';
 });
