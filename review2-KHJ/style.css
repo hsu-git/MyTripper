@@ -7,13 +7,12 @@ body {
   color: #333;
 }
 
-.container {
-  max-width: 960px;
+.container2 {
+  width: 70em;
   margin: auto;
   background-color: #fff;
   padding: 30px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .review-container {
@@ -103,7 +102,6 @@ body {
   background-color: #004494;
 }
 
-
 /* 댓글 스타일 */
 .comment {
   padding: 15px;
@@ -111,7 +109,7 @@ body {
   border: 1px solid #eee;
   border-radius: 5px;
   background-color: #f9f9f9;
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.05); /* 댓글 그림자 효과 */
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.05); /* 댓글 그림자 효과 */
 }
 
 .comment p {
