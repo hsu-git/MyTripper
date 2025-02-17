@@ -145,8 +145,9 @@ function displayReviewPost(reviewPost) {
   if (!reviewPost) {
     reviewContainer.innerHTML = "<p>후기 게시글을 불러올 수 없습니다.</p>"; // 게시글 없을 때 메시지 표시
     return;
-  } // review-post div 생성 (style.css 스타일 적용)
+  }
 
+  // review-post div 생성 (style.css 스타일 적용)
   const reviewPostDiv = document.createElement("div");
   reviewPostDiv.classList.add("review-post");
 
@@ -170,8 +171,9 @@ function displayReviewPost(reviewPost) {
   contentDiv.appendChild(imageElement);
   contentDiv.appendChild(commentElement);
 
-  reviewPostDiv.appendChild(contentDiv); // reviewContainer (후기글 + 댓글 영역) 안에 reviewPostDiv를 맨 위에 추가
+  reviewPostDiv.appendChild(contentDiv);
 
+  // reviewContainer (후기글 + 댓글 영역) 안에 reviewPostDiv를 맨 위에 추가
   reviewContainer.insertBefore(reviewPostDiv, reviewContainer.firstChild); // 댓글 폼 위에 추가
 }
 
@@ -185,10 +187,14 @@ function Check_Login() {
 
 // 페이지 로드 시 실행
 window.addEventListener("DOMContentLoaded", async () => {
-  Check_Login(); // URL에서 serial_number 가져오기 (async 함수 안에서 다시 가져올 필요 없음) // 🌟 후기 게시글 데이터 가져오기 및 표시
-  const reviewPost = await getReviewPost(serial_number);
-  displayReviewPost(reviewPost); // 댓글 데이터 가져오기 및 표시 (기존 코드)
+  Check_Login();
+  // URL에서 serial_number 가져오기 (async 함수 안에서 다시 가져올 필요 없음)
 
+  // 🌟 후기 게시글 데이터 가져오기 및 표시
+  const reviewPost = await getReviewPost(serial_number);
+  displayReviewPost(reviewPost);
+
+  // 댓글 데이터 가져오기 및 표시 (기존 코드)
   const comments = await getComments();
   displayComments(comments);
 
