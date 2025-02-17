@@ -53,7 +53,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // ... (기존 저장하기, 추가 질문하기 버튼 이벤트 리스너 코드와 동일) ...
 });
+const searchButton = document.getElementById("search-button");
+const searchInput = document.getElementById("search-input");
 
+searchButton.addEventListener("click", function () {
+  const query = searchInput.value;
+  if (query) {
+    callSearchAPI(query);
+  } else {
+    alert("질문을 입력해주세요.");
+  }
+});
+
+async function callSearchAPI(query) {
+  try {
+    showLoading(); // 로딩 표시
+
+    // Gemini API 호출 (검색 쿼리 사용)
+    const geminiResult = await callGeminiAI(query);
+    displaySearchResult(geminiResult);
+  } catch (error) {
+    console.error("검색 API 호출 오류:", error);
+    alert("검색 결과를 가져오는 데 실패했습니다.");
+  } finally {
+    hideLoading(); // 로딩 숨김
+  }
+}
 // ✅ 수정: callAI 함수를 범용 API 호출 함수로 변경 (요청 body 파라미터 분리)
 async function callAI({ url, apiKey, model, text }) {
   try {
@@ -223,6 +248,10 @@ async function uploadImageToSupabase(imageDataUrl, imageName) {
   }
 }
 
+console.log("Supabase에 저장될 maintitle 값:", dataToInsert.maintitle); // 추가된 부분
+async function getUserIdFromLocalStorage() {
+  return localStorage.getItem("user_id"); // 로컬 스토리지에서 user_id 가져오기
+}
 async function saveImageUrlToDatabase(
   imageUrl,
   mbti,
@@ -230,31 +259,37 @@ async function saveImageUrlToDatabase(
   subTitle,
   contentText
 ) {
-  console.log("saveImageUrlToDatabase 파라미터 (삽입):", {
-    // ✅ 로그 메시지 변경 (삽입)
-    imageUrl,
-    mbti,
-    mainTitle,
-    subTitle,
-    contentText,
-  });
-  console.log("✅ insert 직전 mbti 값:", mbti); // ✅ 로그 메시지 변경 (insert 직전)
-  const { data, error } = await supabase.from("travelplan").insert([
-    // ✅ update() 대신 insert() 메서드 사용, 배열 형태로 데이터 전달
-    {
-      plan_mbti: mbti, // ✅ plan_mbti 컬럼 포함 (삽입 시 필요)
-      image_url: imageUrl,
-      main_title: mainTitle,
-      sub_title: subTitle,
-      content_text: contentText, // time_test 컬럼은 defaultvalue: now() 에 의해 자동 설정됩니다. // serial_number 컬럼은 auto-increment (자동 증가) 설정에 의해 자동 생성됩니다.
-    },
-  ]); // .eq("plan_mbti", mbti); // ✅ insert() 에는 eq() 조건 불필요, 제거
-  if (error) {
-    console.error("❌ travelplan 테이블 데이터 삽입 실패:", error); // ✅ 오류 메시지 변경 (삽입 실패)
-    alert("❌ travelplan 테이블 정보 저장 실패: " + error.message); // ✅ 알림 메시지 변경 (삽입 실패) // 또는 더 눈에 띄는 콘솔 로그 사용: // console.error("🔥🔥🔥 travelplan 테이블 삽입 실패:", error);
-  } else {
-    console.log("✅ travelplan 테이블 삽입 성공!"); // ✅ 성공 로그 메시지 변경 (삽입 성공)
-    console.log("✅ 삽입된 데이터:", data); // ✅ 삽입된 데이터 로그 추가 (디버깅 용이)
+  try {
+    const userId = await getUserIdFromLocalStorage(); // 로컬 스토리지에서 user_id 가져오기
+    if (userId) {
+      const postDay = new Date().toISOString(); // 현재 날짜 가져오기
+
+      const { data, error } = await supabase.from("travelplan").insert([
+        {
+          plan_mbti: mbti,
+          image_url: imageUrl,
+          main_title: mainTitle,
+          sub_title: subTitle,
+          content_text: contentText,
+          post_day: postDay,
+          user_id: userId, // 로컬 스토리지에서 가져온 user_id 사용
+        },
+      ]);
+
+      if (error) {
+        console.error("❌ travelplan 테이블 데이터 삽입 실패:", error);
+        alert("❌ travelplan 테이블 정보 저장 실패: " + error.message);
+      } else {
+        console.log("✅ travelplan 테이블 삽입 성공!");
+        console.log("✅ 삽입된 데이터:", data);
+      }
+    } else {
+      console.error("로컬 스토리지에서 user_id를 찾을 수 없습니다.");
+      alert("로그인 후 이용해주세요.");
+    }
+  } catch (error) {
+    console.error("user_id 가져오기 실패:", error);
+    alert("사용자 정보를 가져오는 데 실패했습니다.");
   }
 }
 
@@ -273,98 +308,69 @@ function displayImage(imageUrl) {
 
 async function displayAIResult(result, imageUrl) {
   if (result && result.result) {
-    // 1. AI 응답 로깅
-    console.log("AI 응답:", result.result);
-    // 특수문자 제거를 위한 정규 표현식
     const specialCharRegex = /[#*]+/g;
-
     let processedResult = result.result.replace(specialCharRegex, "");
 
-    // 2. 특수문자 제거 후 텍스트 로깅
-    console.log("특수문자 제거 후 텍스트:", processedResult);
+    const summaryIndex = processedResult.indexOf("1. 30자 이내 요약:");
+    const detailsIndex = processedResult.indexOf("2.");
 
-    const parts = processedResult.split("\n\n**3. ");
-    const [summaryDetails] = parts;
+    let subTitle = "";
+    let contentTextToSave = "";
 
-    // 3. summaryDetails 로깅
-    console.log("summaryDetails:", summaryDetails);
+    if (summaryIndex !== -1 && detailsIndex !== -1) {
+      subTitle = processedResult
+        .substring(summaryIndex + "1. 30자 이내 요약:".length, detailsIndex)
+        .trim();
+      contentTextToSave = processedResult.substring(detailsIndex).trim();
+    }
 
-    if (summaryDetails) {
-      const regex = /\n\n2\. /; // \n\n2. 패턴을 찾는 정규 표현식
-      const parts = summaryDetails.split(regex);
+    // 넘버링 제거
+    contentTextToSave = contentTextToSave.replace(/^[2-9]\.\s*/gm, "");
 
-      if (parts.length > 1) {
-        const summary = parts[0].trim();
-        const details = parts[1].trim();
+    const lines = processedResult.split("\n");
+    const mainTitle = lines[0].trim(); // AI 출력값에서 mainTitle 추출
 
-        // 4. 구분자 확인 (summary 및 details 로깅)
-        console.log("summary:", summary);
-        console.log("details:", details);
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemResult = urlParams.get("item");
 
-        if (summary && details) {
-          const urlParams = new URLSearchParams(window.location.search);
-          const mbtiResult = urlParams.get("mbti");
-          const itemResult = urlParams.get("item");
-          const locationResult = urlParams.get("location");
+    imageUrlToSave = imageUrl;
+    mbtiToSave = urlParams.get("mbti");
+    mainTitleToSave = mainTitle; // AI 출력값 mainTitle을 mainTitleToSave에 할당
+    subTitleToSave = subTitle;
+    contentTextToSave = contentTextToSave;
 
-          imageUrlToSave = imageUrl; // Together AI 에서 생성된 이미지 URL 저장
-          mbtiToSave = mbtiResult;
-          mainTitleToSave = itemResult;
-          subTitleToSave = summary.replace("**1. 30자 요약**\n\n", "");
-          contentTextToSave = details.replace(
-            "**2. 추천에 대한 상세 내용 및 위치**\n\n",
-            ""
-          );
+    // mainTitle, subTitle, contentText를 화면에 표시
+    document.querySelector(".mainTitle h1").textContent = mainTitle;
+    document.querySelector(".subTitle h2").textContent = subTitle;
+    document.querySelector(
+      ".subTitle .region p"
+    ).innerHTML = `<pre>${contentTextToSave}</pre>`;
+    displayImage(imageUrl);
 
-          document.querySelector(
-            ".mainTitle h1"
-          ).textContent = `${itemResult}, ${locationResult}`; // 수정된 부분 반영
-          document.querySelector(".subTitle h2").textContent = subTitleToSave;
-          // contentTextToSave를 <pre> 태그로 감싸서 표시
-          document.querySelector(
-            ".subTitle .region p"
-          ).innerHTML = `<pre>${contentTextToSave}</pre>`;
-          displayImage(imageUrl); // Together AI 에서 생성된 이미지 URL 을 displayImage 에 전달
+    console.log("mainTitle이 화면에 표시됨:", mainTitle); // mainTitle 표시 후 로그 추가
 
-          // ✅ Supabase 에 이미지 URL 및 정보 저장 (추가된 코드)
-          try {
-            const imageName = `image_${Date.now()}.png`; // ✅ "image_" 접두사 + 타임스탬프 (가장 단순)
-            const uploadedImageUrl = await uploadImageToSupabase(
-              imageUrl,
-              imageName
-            ); // 이미지 Data URL 대신 imageUrl 전달
-            if (uploadedImageUrl) {
-              console.log(
-                "✅ 이미지 업로드 성공, 이제 데이터베이스에 정보 저장..."
-              ); // ✅ 이 줄을 추가
-              await saveImageUrlToDatabase(
-                uploadedImageUrl,
-                mbtiResult,
-                itemResult,
-                subTitleToSave,
-                contentTextToSave
-              );
-              console.log(
-                "✅ 이미지 및 정보 Supabase 저장 성공:",
-                uploadedImageUrl
-              ); // 성공 로그
-            } else {
-              console.error("❌ Supabase 이미지 업로드 실패"); // 업로드 실패 로그
-            }
-          } catch (supabaseError) {
-            console.error("❌ Supabase 저장 오류:", supabaseError); // Supabase 저장 오류 로그
-            alert(
-              "⚠️ Supabase 에 이미지 및 정보를 저장하는 데 실패했습니다. 하지만 AI 결과는 정상적으로 표시됩니다."
-            ); // 사용자에게 알림 (경고)
-          }
-        } else {
-          console.error("summary 또는 details 추출 실패");
-          displayImage("default_image.jpg");
-        }
+    // mainTitle이 화면에 표시된 후에 데이터베이스 저장 로직 실행
+    try {
+      const imageName = `image_${Date.now()}.png`;
+      const uploadedImageUrl = await uploadImageToSupabase(imageUrl, imageName);
+      if (uploadedImageUrl) {
+        console.log("✅ 이미지 업로드 성공, 이제 데이터베이스에 정보 저장...");
+        await saveImageUrlToDatabase(
+          uploadedImageUrl,
+          mbtiToSave,
+          mainTitleToSave, // mainTitleToSave를 사용하여 main_title 전달
+          subTitleToSave,
+          contentTextToSave
+        );
+        console.log("✅ 이미지 및 정보 Supabase 저장 성공:", uploadedImageUrl);
+      } else {
+        console.error("❌ Supabase 이미지 업로드 실패");
       }
-    } else {
-      console.error("parts 분리 실패");
-      displayImage("default_image.jpg");
+    } catch (supabaseError) {
+      console.error("❌ Supabase 저장 오류:", supabaseError);
+      alert(
+        "⚠️ Supabase 에 이미지 및 정보를 저장하는 데 실패했습니다. 하지만 AI 결과는 정상적으로 표시됩니다."
+      );
     }
   } else {
     console.error("AI 결과가 올바르지 않습니다:", result);
