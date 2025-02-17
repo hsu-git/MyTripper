@@ -2,67 +2,80 @@ body {
   font-family: sans-serif;
   margin: 0;
   padding: 0;
-  color: var(--main-text-color) !important; /* CSS 변수 사용 */
+  color: rgb(18, 3, 3) !important;
 }
+
 .header-content {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .mainTitle {
   text-align: center;
   margin-bottom: 10px;
 }
+
 .image-area {
   width: 40%;
   margin-left: 20px;
 }
+
 .image-area img {
   width: 100%;
   height: auto;
 }
+
 main {
   padding: 20px;
 }
-.subTitle .contentText {
-  /* CSS 선택자 구체화, .details 제거 */
+
+.details {
   margin-bottom: 20px;
 }
+
 .contentText {
   display: flex;
   align-items: flex-start;
 }
+
 .text-area {
   width: 60%;
 }
-.text-area .region, /* CSS 선택자 구체화 */
+
+.region,
 .content {
   margin-bottom: 10px;
 }
+
 .search-area {
   text-align: center;
 }
+
 .search-box {
   display: flex;
   justify-content: center;
 }
+
 .search-box input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-right: 10px;
 }
+
 .search-box button {
   padding: 10px 20px;
-  background-color: var(--button-color); /* CSS 변수 사용 */
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
+
 #save-button {
   padding: 10px 20px;
-  background-color: var(--save-button-color); /* CSS 변수 사용 */
+  background-color: #1e90ff;
   color: white;
   border: none;
   border-radius: 5px;
@@ -71,10 +84,12 @@ main {
   display: block;
   width: 150px;
 }
+
 .button-area {
   display: flex;
   justify-content: center;
 }
+
 .back-button,
 .info-button {
   padding: 10px 20px;
@@ -85,28 +100,16 @@ main {
   border-radius: 5px;
   cursor: pointer;
 }
-.search-area {
-  /* 수정: .subTitle .details 제거 */
+
+.search-area,
+.details {
   backdrop-filter: blur(2px);
   background-color: rgba(255, 255, 255, 0.1);
 }
+
 #loading {
   text-align: center;
   margin-top: 10px;
   font-style: italic;
   color: gray;
-}
-/* CSS 변수 정의 */
-:root {
-  --main-text-color: rgb(18, 3, 3);
-  --button-color: #4caf50;
-  --save-button-color: #1e90ff;
-}
-/* 검색 결과 텍스트 스타일 */
-.search-result-text {
-  white-space: pre-wrap; /* 줄 바꿈 유지 */
-}
-.subTitle .region p pre {
-  white-space: pre-wrap;
-  font-family: Arial, sans-serif; /* 원하는 글꼴로 변경 */
 }
