@@ -70,7 +70,7 @@ resultButton.addEventListener('click', (event) => {
   console.log('MBTI 결과값:', mbtiResult);
 
   // URL 파라미터에 mbti 값을 포함하여 targetUrl 생성
-  const targetUrl = `../main02-CJH/index.html?mbti=${mbtiResult}`;
+  const targetUrl = `/MyTripper/main02-CJH/index.html?mbti=${mbtiResult}`;
 
   console.log('Target URL:', targetUrl); // targetUrl 확인
 
@@ -136,8 +136,8 @@ function logout() {
 }
 
 // 헤더와 푸터 로드
-loadComponent('header', '../_common/header.html');
-loadComponent('footer', '../_common/footer.html');
+loadComponent('header', '/MyTripper/_common/header.html');
+loadComponent('footer', '/MyTripper/_common/footer.html');
 
 // "로그인이 필요합니다" 버튼 클릭 이벤트 핸들러 추가
 loginRequiredButton.addEventListener('click', () => {
