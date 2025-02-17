@@ -12,7 +12,7 @@ findPasswordForm.addEventListener("submit", async (event) => {
 
   try {
     // 본인 확인 요청을 백엔드로 보냄 (/reset-password-mbti API 호출)
-    const response = await fetch("http://localhost:3000/reset-password-mbti", {
+    const response = await fetch("https://nifty-curly-map.glitch.me/reset-password-mbti", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id, mbti }), // JSON 형식으로 아이디와 MBTI 전송
@@ -45,7 +45,7 @@ setPasswordForm.addEventListener("submit", async (event) => {
 
   try {
     // 새 비밀번호 설정 요청을 백엔드로 보냄 (/set-new-password API 호출)
-    const response = await fetch("http://localhost:3000/set-new-password", {
+    const response = await fetch("https://nifty-curly-map.glitch.me/set-new-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id, newPassword }), // JSON 형식으로 아이디와 새 비밀번호 전송

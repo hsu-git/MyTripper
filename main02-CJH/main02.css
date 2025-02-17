@@ -25,6 +25,7 @@
   padding: 1rem;
   border: 1px solid #ddd; /* 연한 테두리 추가 */
   border-radius: 0.5rem;
+  background-color: #d0e6fa;
 }
 
 .mbti-description-section img {
@@ -52,18 +53,18 @@
 
 .result-cards {
   display: none; /* Grid 레이아웃 적용 */
-  grid-template-columns: 1fr; /* 기본적으로 1 컬럼 */
+  /* grid-template-columns: 1fr;  더 이상 불필요 */
   gap: 1.5rem; /* gap-6 -> 1.5rem */
   margin-top: 1.5rem; /* mt-6 -> 1.5rem */
 }
 
 /* medium 사이즈 (md) 이상 화면에서 3 컬럼으로 변경 (Bootstrap breakpoints 참고) */
-@media (min-width: 768px) {
-  /* md: */
-  .result-cards {
-    grid-template-columns: repeat(3, 1fr); /* md:grid-cols-3 -> 3 컬럼 */
-  }
-}
+/* @media (min-width: 768px) { */
+/* md: */
+/*   .result-cards { */
+/*     grid-template-columns: repeat(3, 1fr);  md:grid-cols-3 -> 3 컬럼 */
+/*   } */
+/* } */
 
 .result-item {
   /* result-card -> result-item */
@@ -192,3 +193,34 @@
   color: #3498db;
   font-size: 1.4em;
 }
+
+.card-container {
+  /* result-item 들을 감싸는 컨테이너 (result-cards 로 변경) */
+  display: flex; /* 또는 grid 등 레이아웃 방식 설정 */
+  flex-direction: column; /* 필요에 따라 설정 */
+}
+
+.card.result-item {
+  opacity: 0; /* 초기 상태: 숨김 */
+  transform: translateY(20px); /* 초기 위치: 아래로 20px 이동 */
+  animation: card-fade-in 0.8s ease-out forwards; /* 애니메이션 설정 */
+}
+
+@keyframes card-fade-in {
+  to {
+    opacity: 1; /* 최종 상태: 나타남 */
+    transform: translateY(0); /* 최종 위치: 원래 위치 */
+  }
+}
+
+/* 각 result-item 에 animation-delay 를 순차적으로 적용 */
+.card.result-item:nth-child(1) {
+  animation-delay: 0s;
+}
+.card.result-item:nth-child(2) {
+  animation-delay: 0.5s; /* 0.5초 딜레이 */
+}
+.card.result-item:nth-child(3) {
+  animation-delay: 1s; /* 1초 딜레이 (0.5초 간격) */
+}
+/* 필요에 따라 result-item 개수만큼 animation-delay 추가 */

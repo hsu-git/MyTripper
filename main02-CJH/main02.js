@@ -121,7 +121,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   try {
     // ✅ 서버 API 엔드포인트 호출하여 API 키 가져오기
-    const keysResponse = await fetch("http://localhost:3000/api/keys"); // ✅ 수정: 절대 경로 이후 수정 필요!!!!!! // const keysResponse = await fetch("/api/keys"); // 서버의 API 엔드포인트 호출 (예: /api/keys)
+    const keysResponse = await fetch(
+      "https://nifty-curly-map.glitch.me/api/keys"
+    ); // ✅ 수정: 절대 경로 이후 수정 필요!!!!!! // const keysResponse = await fetch("/api/keys"); // 서버의 API 엔드포인트 호출 (예: /api/keys)
     if (!keysResponse.ok) {
       throw new Error(
         `API 키를 불러오는데 실패했습니다: ${keysResponse.status} ${keysResponse.statusText}`
@@ -136,14 +138,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     GROQ_API_KEY_JH = keys.GROQ_API_KEY;
     GEMINI_API_KEY_JH = keys.GEMINI_API_KEY_JH;
 
-    console.log("API 키:", {
-      TOGETHER_API_KEY_JH: TOGETHER_API_KEY_JH,
-      TOGETHER_API_KEY_WG: TOGETHER_API_KEY_WG,
-      TOGETHER_API_KEY_HS: TOGETHER_API_KEY_HS,
-      TOGETHER_API_KEY_IS: TOGETHER_API_KEY_IS,
-      GROQ_API_KEY: GROQ_API_KEY_JH,
-      GEMINI_API_KEY_JH: GEMINI_API_KEY_JH,
-    });
+    // console.log("API 키:", {
+    //   TOGETHER_API_KEY_JH: TOGETHER_API_KEY_JH,
+    //   TOGETHER_API_KEY_WG: TOGETHER_API_KEY_WG,
+    //   TOGETHER_API_KEY_HS: TOGETHER_API_KEY_HS,
+    //   TOGETHER_API_KEY_IS: TOGETHER_API_KEY_IS,
+    //   GROQ_API_KEY: GROQ_API_KEY_JH,
+    //   GEMINI_API_KEY_JH: GEMINI_API_KEY_JH,
+    // });
 
     const text = mbtiResult; // ✅ URL 파라미터에서 받은 MBTI 값을 text 변수에 할당 // 이미지, MBTI 설명, 추천 음식/액티비티 생성
     const imagePrompt = await callAI({

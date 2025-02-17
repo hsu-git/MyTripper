@@ -12,7 +12,7 @@ document
 
     try {
       // 회원가입 요청을 백엔드로 보냄
-      const response = await fetch("http://localhost:3000/signup", {
+      const response = await fetch("https://nifty-curly-map.glitch.me/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, user_id, password, mbti }), // JSON 형식으로 데이터 전송
