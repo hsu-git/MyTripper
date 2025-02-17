@@ -3,7 +3,6 @@
 // const dbUrl = 'https://nifty-curly-map.glitch.me';
 const dbUrl = 'http://127.0.0.1:3000';
 const dbCommentTableName = 'comment';
-let loginFlag = false;
 
 // URL에서 serial_number 파라미터 가져오기 (댓글과 후기글 모두 사용)
 const urlParams = new URLSearchParams(window.location.search);
@@ -36,78 +35,85 @@ async function getReviewPost(serial_number) {
 
 // 댓글 조회 (기존 함수)
 async function getComments() {
-    try {
-        const response = await fetch(`${dbUrl}/comment?id=${serial_number}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-        });
+  try {
+    const response = await fetch(`${dbUrl}/comment?id=${serial_number}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
 
-        const comments = await response.json();
-        console.log(comments);
-        return comments;
-    } catch (error) {
-        alert('댓글 조회에 실패했습니다. 다시 시도해주세요.');
-        return;
-    }
+    const comments = await response.json();
+    console.log(comments);
+    return comments;
+  } catch (error) {
+    alert('댓글 조회에 실패했습니다. 다시 시도해주세요.');
+    return;
+  }
 }
 
 // 댓글 추가 (기존 함수)
 async function SetComment() {
-    const commentValue = document.querySelector('#comment-area').value;
-    if (commentValue == '') return;
+  const commentValue = document.querySelector('#comment-area').value;
+  if (commentValue == '') return;
 
-    const comment = {
-        c_user_id: localStorage.getItem('user_id'),
-        c_s_num: serial_number,
-        comment: commentValue,
-        comment_day: getTime(),
-    };
-    console.log('comment :', comment);
-    try {
-        const response = await fetch(`${dbUrl}/comment/add`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(comment),
-        });
+  const comment = {
+    c_user_id: localStorage.getItem('user_id'),
+    c_s_num: serial_number,
+    comment: commentValue,
+    comment_day: getTime(),
+  };
+  console.log('comment :', comment);
+  try {
+    const response = await fetch(`${dbUrl}/comment/add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(comment),
+    });
 
-        const comments = await response.json();
-        console.log(comments);
-        return comments;
-    } catch (error) {
-        alert('댓글 조회에 실패했습니다. 다시 시도해주세요.');
-        return;
-    }
+    const comments = await response.json();
+    console.log(comments);
+
+    // ✨✨✨ 수정된 부분: 댓글 추가 후 댓글 목록 새로고침 및 입력창 초기화 ✨✨✨
+    const updatedComments = await getComments();
+    displayComments(updatedComments);
+    document.querySelector('#comment-area').value = ''; // 댓글 입력창 비우기
+
+    return comments;
+  } catch (error) {
+    alert('댓글 추가에 실패했습니다. 다시 시도해주세요.'); // 알림 메시지 변경
+    return;
+  }
 }
 
 // 댓글을 화면에 표시하는 함수 (기존 함수)
 function displayComments(comments) {
-    const commentsContainer = document.getElementById('comments-container');
-    commentsContainer.innerHTML = '';
+  const commentsContainer = document.getElementById('comments-container');
+  commentsContainer.innerHTML = '';
 
-    if (!comments || comments.length === 0) {
-        commentsContainer.innerHTML = '<p>아직 댓글이 없습니다.</p>';
-        return;
-    }
+  if (!comments || comments.length === 0) {
+    commentsContainer.innerHTML = '<p>아직 댓글이 없습니다.</p>';
+    return;
+  }
 
-    comments.forEach((comment) => {
-        const commentDiv = document.createElement('div');
-        commentDiv.classList.add('comment');
+  comments.forEach((comment) => {
+    const commentDiv = document.createElement('div');
+    commentDiv.classList.add('comment');
 
-        const userIdElement = document.createElement('p');
-        userIdElement.textContent = `작성자: ${comment.c_user_id}`;
+    const userIdElement = document.createElement('p');
+    userIdElement.textContent = `작성자: ${comment.c_user_id}`;
 
-        const commentTextElement = document.createElement('p');
-        commentTextElement.textContent = comment.comment;
+    const commentTextElement = document.createElement('p');
+    commentTextElement.textContent = comment.comment;
 
-        const commentDateElement = document.createElement('p');
-        commentDateElement.textContent = `작성일: ${comment.comment_day}`;
+    const commentDateElement = document.createElement('p');
+    // ✨✨✨ 수정된 부분: 작성일 T -> 공백 치환 ✨✨✨
+    commentDateElement.textContent = `작성일: ${comment.comment_day.replace('T', ' ')}`;
 
-        commentDiv.appendChild(userIdElement);
-        commentDiv.appendChild(commentTextElement);
-        commentDiv.appendChild(commentDateElement);
+    commentDiv.appendChild(userIdElement);
+    commentDiv.appendChild(commentTextElement);
+    commentDiv.appendChild(commentDateElement);
 
-        commentsContainer.appendChild(commentDiv);
-    });
+    commentsContainer.appendChild(commentDiv);
+  });
 }
 
 function getTime() {
@@ -124,6 +130,7 @@ function getTime() {
     var timeString = hours + ':' + minutes + ':' + seconds;
 
     var dateString = year + '-' + month + '-' + day;
+
 
     return dateString + ' ' + timeString;
 }
@@ -168,9 +175,17 @@ function displayReviewPost(reviewPost) {
         reviewContainer.insertBefore(reviewPostDiv, reviewContainer.firstChild); // 댓글 폼 위에 추가
 }
 
+function Check_Login() {
+  const getUser_id = localStorage.getItem('user_id');
+  if (!getUser_id) {
+    const commentForm = document.getElementById('comment-form');
+    commentForm.style.display = 'none';
+  }
+}
 
 // 페이지 로드 시 실행
 window.addEventListener('DOMContentLoaded', async () => {
+  Check_Login();
     // URL에서 serial_number 가져오기 (async 함수 안에서 다시 가져올 필요 없음)
 
     // 🌟 후기 게시글 데이터 가져오기 및 표시
@@ -180,4 +195,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     // 댓글 데이터 가져오기 및 표시 (기존 코드)
     const comments = await getComments();
     displayComments(comments);
+  
+  // ✨✨✨ Submit 버튼 클릭 이벤트 리스너 ✨✨✨
+  const submitButton = document.getElementById('submit-button'); // Submit 버튼 ID
+  if (submitButton) {
+    submitButton.addEventListener('click', async (event) => {
+      event.preventDefault(); //  form submit 방지 (필요에 따라)
+      await SetComment();
+    });
+  }
 });
