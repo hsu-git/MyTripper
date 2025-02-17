@@ -163,5 +163,5 @@ app.post("/set-new-password", async (req, res) => {
 
 // 🟢 서버 실행
 app.listen(port, () => {
-    console.log(`✅ 서버가 실행 중: http://localhost:${port}`);
+    console.log(`✅ 서버가 실행 중: https://nifty-curly-map.glitch.me`);
 });

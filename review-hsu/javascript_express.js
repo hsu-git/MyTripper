@@ -137,7 +137,7 @@ async function fetchBoardData(page = 1, mbtiList = [], searchText = "") {
     params.append("sort", currentSort);
 
     const res = await fetch(
-      `http://localhost:3000/api/reviews?${params.toString()}`
+      `https://nifty-curly-map.glitch.me/api/reviews?${params.toString()}`
     );
     const json = await res.json();
     if (!json.success) throw new Error(json.message);
