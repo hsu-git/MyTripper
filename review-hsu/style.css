@@ -44,3 +44,27 @@ main {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* 버튼 활성화 시 강조 */
+.sort-buttons .active {
+  background-color: #4874b6;
+  color: white;
+}
+
+/* 댓글 아이콘 및 수 */
+.comment-count {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 4px;
+  color: #54586a;
+  font-size: 0.9em;
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+}
+
+.comment-count img {
+  width: 20px;
+  height: 20px;
+}
